@@ -44,3 +44,6 @@ The projects are (or were) surpervised by:
 
 __warning__
 You normally do not need to change firmware running in F103 and F476 boards. You main work is on the raspberry and jetson side.
+
+## SHAIBEL TEAM 
+Madeline ROntard 
