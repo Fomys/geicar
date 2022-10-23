@@ -3,7 +3,7 @@ import signal
 from rclpy.node import Node
 from std_msgs.msg import String
 import threading
-from flask import Flask
+from flask import Flask, render_template
 
 
 class TestPublisher(Node):
@@ -23,7 +23,7 @@ class TestPublisher(Node):
 
     def publish_message(self):
         msg = String()
-        msg.data = 'hello, world!'
+        msg.data = "J'avance de 10m"
         self.publisher.publish(msg)
 
 
@@ -49,10 +49,13 @@ def sigint_handler(signal, frame):
 def main(args=None):
     rclpy.init(args=None)
     ros2_node = TestPublisher()
-    app = Flask(__name__)
+    app = Flask(__name__, template_folder='templates')
     threading.Thread(target=ros2_thread, args=[ros2_node]).start()
     prev_sigint_handler = signal.signal(signal.SIGINT, sigint_handler)
 
+    @app.route('/')
+    def welcome():
+        return render_template('welcome.html')
 
     @app.route('/latest_message')
     def get_current_time():
@@ -61,6 +64,6 @@ def main(args=None):
     @app.route('/publish_message')
     def get_publish_message():
         ros2_node.publish_message()
-        return {}
+        return render_template('sent.html')
         
     app.run(port=5000)
