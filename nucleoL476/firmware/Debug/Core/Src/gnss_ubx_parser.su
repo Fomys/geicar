@@ -1,5 +1,0 @@
-../Core/Src/gnss_ubx_parser.c:18:6:UBX_Fletcher_Checksum	4	static
-../Core/Src/gnss_ubx_parser.c:31:6:UBX_Parse_Raw_To_NAV_PVT	0	static
-../Core/Src/gnss_ubx_parser.c:100:6:UBX_Parse_Raw_To_NAV_ATT	0	static
-../Core/Src/gnss_ubx_parser.c:124:6:UBX_Parse_Raw_To_NAV_DOP	0	static
-../Core/Src/gnss_ubx_parser.c:145:6:UBX_Parse_Raw_To_NAV_ODO	0	static

@@ -1,5 +1,0 @@
-../Core/Src/main.c:434:6:CAN_FIFO_0_Callback	0	static
-../Core/Src/main.c:154:6:SystemClock_Config	96	static,ignoring_inline_asm
-../Core/Src/main.c:94:5:main	48	static,ignoring_inline_asm
-../Core/Src/main.c:278:6:HAL_UART_RxCpltCallback	40	dynamic
-../Core/Src/main.c:444:6:Error_Handler	0	static,ignoring_inline_asm

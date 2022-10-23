@@ -1,4 +1,0 @@
-can_rx_node:
-  ros__parameters:
-    CAPT_WHEN_STRAIGHT:	560
-    CAPT_WHEN_RIGHT:	1760
