@@ -8,7 +8,7 @@ def generate_launch_description():
 
     joystick_node = Node(
         package="joystick_ros2",
-        executable="joystick_ros2.py",
+        executable="joystick_ros2",
         emulate_tty=True
     )
 
