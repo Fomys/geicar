@@ -30,3 +30,9 @@
 *.exe
 *.out
 *.app
+
+build/
+install/
+log/
+.idea/
+*.egg-info

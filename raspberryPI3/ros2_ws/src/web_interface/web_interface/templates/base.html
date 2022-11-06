@@ -1,0 +1,30 @@
+<!doctype html>
+
+<head>
+    <title>{% block title %}{% endblock %} - PostCar</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="main">
+        <h1 class="title">PostCar - {{ config.VERSION }}</h1>
+        <ul>
+            <li>
+                Controle
+                <ul>
+                    <li>Réceptionner un colis</li>
+                    <li>Envoyer un colis</li>
+                </ul>
+            </li>
+            <li>
+                Système
+                <ul>
+                    <li>Status</li>
+                    <li><a href="logs">Logs</a></li>
+                </ul>
+            </li>
+        </ul>
+    </nav>
+    <main>
+        {% block body %}{% endblock %}
+    </main>
+</body>

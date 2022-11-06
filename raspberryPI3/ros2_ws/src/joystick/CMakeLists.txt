@@ -36,12 +36,6 @@ joystick_to_cmd
   DESTINATION lib/${PROJECT_NAME}
 )
 
-ament_python_install_package(${PROJECT_NAME})
-
-install(PROGRAMS
-  joystick/joystick_ros2.py
-  DESTINATION lib/${PROJECT_NAME}
-)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

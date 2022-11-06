@@ -7,7 +7,7 @@ def generate_launch_description():
     ld = LaunchDescription()
 
     joystick_node = Node(
-        package="joystick",
+        package="joystick_ros2",
         executable="joystick_ros2.py",
         emulate_tty=True
     )
@@ -53,6 +53,12 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    web_interface = Node(
+        package="web_interface",
+        executable="web_interface",
+        emulate_tty=True
+    )
+
 
     ld.add_action(joystick_node)
     ld.add_action(joystick_to_cmd_node)
@@ -61,5 +67,6 @@ def generate_launch_description():
     ld.add_action(car_control_node)
     ld.add_action(imu_filter_madgwick_node)
     ld.add_action(system_check_node)
+    ld.add_action(web_interface)
 
     return ld
