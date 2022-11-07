@@ -36,6 +36,13 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    direction_control_node = Node(
+        package="direction_control",
+        executable="direction_control_node",
+        emulate_tty=True
+    )
+
+
 
     config_dir = os.path.join(get_package_share_directory('imu_filter_madgwick'), 'config')
 
