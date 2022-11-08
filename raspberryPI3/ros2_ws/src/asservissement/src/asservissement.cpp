@@ -3,10 +3,10 @@
 using namespace std;
 using placeholders::_1;
 
-class direction_control_node : public rclcpp::Node{
+class asservissement : public rclcpp::Node{
 
 public:
-    direction_control_node():Node("direction_control_node")
+    asservissement():Node("direction_control_node")
     {
 
         //Parameter declaration for gains in PID
@@ -25,7 +25,7 @@ public:
                 "motors_feedback", 10, std::bind(&car_control::motorsFeedbackCallback, this, _1));
 
         //Subscription to the users input
-        subscription_brain_order_ = this->create_subscription<interfaces::msg::MovementOrder>(
+        subscription_brain_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
                 "brain_order", 10, std::bind(&car_control::executeBrainCmd, this, _1));
 
         //Inform the log the node has been launched

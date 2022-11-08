@@ -36,9 +36,9 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    direction_control_node = Node(
-        package="direction_control",
-        executable="direction_control_node",
+    asservissement = Node(
+        package="asservissement",
+        executable="asservissement",
         emulate_tty=True
     )
 
