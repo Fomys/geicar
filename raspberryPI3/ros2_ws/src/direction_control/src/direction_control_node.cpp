@@ -22,11 +22,11 @@ public:
 
         //Subscription aux données des moteurs
         subscription_motors_feedback_ = this->create_subscription<interfaces::msg::MotorsFeedback>(
-                "motors_feedback", 10, std::bind(&car_control::updateData, this, _1));
+                "motors_feedback", 10, std::bind(&car_control::motorsFeedbackCallback, this, _1));
 
         //Subscription to the users input
         subscription_brain_order_ = this->create_subscription<interfaces::msg::MovementOrder>(
-                "brain_order", 10, std::bind(&car_control::motorsFeedbackCallback, this, _1));
+                "brain_order", 10, std::bind(&car_control::executeBrainCmd, this, _1));
 
         //Inform the log the node has been launched
         RCLCPP_INFO(this->get_logger(), "direction_control_node READY");
