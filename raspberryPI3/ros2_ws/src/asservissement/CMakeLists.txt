@@ -21,6 +21,15 @@ add_executable(asservissement
 ament_target_dependencies(asservissement rclcpp interfaces std_srvs)
 ament_export_include_directories(include)
 
+target_include_directories(asservissement PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>)
+target_compile_features(asservissement PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+
+install(TARGETS asservissement
+        DESTINATION lib/${PROJECT_NAME})
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
