@@ -6,7 +6,7 @@ using placeholders::_1;
 class asservissement : public rclcpp::Node{
 
 public:
-    asservissement():Node("direction_control_node")
+    asservissement():Node("asservissement_node")
     {
 
         //Parameter declaration for gains in PID
@@ -32,7 +32,7 @@ public:
 
 
         //Inform the log the node has been launched
-        RCLCPP_INFO(this->get_logger(), "direction_control_node READY");
+        RCLCPP_INFO(this->get_logger(), "asservissement_node READY");
     }
 
 private:
