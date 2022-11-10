@@ -145,9 +145,9 @@ private:
         currentAngle = motorsFeedback.steering_angle;
         currentRightRearSpeed = motorsFeedback.right_rear_speed;
         currentLeftRearSpeed = motorsFeedback.left_rear_speed;
-        RCLCPP_INFO(this->get_logger(), "Valeur currentAngle : %f", currentAngle);
-        RCLCPP_INFO(this->get_logger(), "Valeur currentRightRearSpeed : %f", currentRightRearSpeed);
-        RCLCPP_INFO(this->get_logger(), "Valeur currentLeftRearSpeed : %f", currentLeftRearSpeed);
+//        RCLCPP_INFO(this->get_logger(), "Valeur currentAngle : %f", currentAngle);
+//        RCLCPP_INFO(this->get_logger(), "Valeur currentRightRearSpeed : %f", currentRightRearSpeed);
+//        RCLCPP_INFO(this->get_logger(), "Valeur currentLeftRearSpeed : %f", currentLeftRearSpeed);
     }
 
     /*
