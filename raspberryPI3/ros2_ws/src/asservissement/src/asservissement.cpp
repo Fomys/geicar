@@ -13,9 +13,11 @@ public:
         auto param_desc = rcl_interfaces::msg::ParameterDescriptor{}; //description of param
         param_desc.description = "Gain Kp";
         this->declare_parameter("kp", 1.0, param_desc);
+        this->declare_parameter("ki", 1.0, param_desc);
 
         //Set value of the parameter for use
         Kp = this->get_parameter("kp").get_parameter_value().get<float>();
+        Ki = this->get_parameter("ki").get_parameter_value().get<float>();
 
         //Publishers
         // sur le topic commande des moteurs
@@ -29,6 +31,9 @@ public:
 //        //Users input
         subscription_brain_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
                 "brain_order", 10, std::bind(&asservissement::executeAngleCmd, this, _1));
+
+        //Timer for update of parameters
+        timer_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
 
 
         //Inform the log the node has been launched
@@ -50,15 +55,20 @@ private:
     //Data for motor feedback
     uint8_t steeringPwmCmd;
 
-    //Data about PID corrector
-    int Kp = 1;
+    //left wheel PID corrector parameters
+    float Kp;
+    float Ki;
+
+    //Timer
+    rclcpp::TimerBase::SharedPtr timer_;
 
     /*
      * Callback to execute the angle cmd of the brain when order is sent
      */
     void executeAngleCmd(const interfaces::msg::AngleOrder & angle)
     {
-        RCLCPP_INFO(this->get_logger(), "Valeur Kp : %d", Kp);
+        RCLCPP_INFO(this->get_logger(), "Valeur Kp : %f", Kp);
+        RCLCPP_INFO(this->get_logger(), "Valeur Ki : %f", Ki);
     }
 
     /*
@@ -67,6 +77,15 @@ private:
     void motorsFeedbackCallback(const interfaces::msg::MotorsFeedback & motorsFeedback)
     {
 
+    }
+
+    /*
+     * Update Parameter values every second in case of a change
+     */
+    void updateParameters()
+    {
+        Kp = this->get_parameter("kp").get_parameter_value().get<float>();
+        Ki = this->get_parameter("ki").get_parameter_value().get<float>();
     }
 
 };

@@ -24,6 +24,9 @@
 //STD
 #include "std_srvs/srv/empty.hpp"
 
+//Defines
+#define PERIOD_UPDATE_PARAM 1000ms //to update params every second
+
 
 
 
