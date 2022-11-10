@@ -52,7 +52,7 @@ public:
 
         //Timer for update of parameters
         timer_parameter_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
-        timer_cmd_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
+        timer_cmd_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::executeCmd, this));
 
 
         //Inform the log the node has been launched
@@ -177,6 +177,14 @@ private:
 //        RCLCPP_INFO(this->get_logger(), "Valeur Kp s : %f", Kp_s);
 //        RCLCPP_INFO(this->get_logger(), "Valeur Ki s : %f", Ki_s);
 //        RCLCPP_INFO(this->get_logger(), "Valeur Kd s : %f", Kd_s);
+    }
+
+    /*
+     * Function executing the PID controller
+     */
+    void executeCmd()
+    {
+        //TODO : Implement Command
     }
 
 };
