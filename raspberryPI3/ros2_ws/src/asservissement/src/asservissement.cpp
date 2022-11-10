@@ -10,14 +10,30 @@ public:
     {
 
         //Parameter declaration for gains in PID
-        auto param_desc = rcl_interfaces::msg::ParameterDescriptor{}; //description of param
-        param_desc.description = "Gain Kp";
-        this->declare_parameter("kp", 1.0, param_desc);
-        this->declare_parameter("ki", 1.0, param_desc);
+        this->declare_parameter("kp_l", 1.0);
+        this->declare_parameter("ki_l", 1.0);
+        this->declare_parameter("kd_l", 1.0);
+
+        this->declare_parameter("kp_r", 1.0);
+        this->declare_parameter("ki_r", 1.0);
+        this->declare_parameter("kd_r", 1.0);
+
+        this->declare_parameter("kp_s", 1.0);
+        this->declare_parameter("ki_s", 1.0);
+        this->declare_parameter("kd_s", 1.0);
 
         //Set value of the parameter for use
-        Kp = this->get_parameter("kp").get_parameter_value().get<float>();
-        Ki = this->get_parameter("ki").get_parameter_value().get<float>();
+        Kp_l = this->get_parameter("kp_l").get_parameter_value().get<float>();
+        Ki_l = this->get_parameter("ki_l").get_parameter_value().get<float>();
+        Kd_l = this->get_parameter("kd_l").get_parameter_value().get<float>();
+
+        Kp_r = this->get_parameter("kp_r").get_parameter_value().get<float>();
+        Ki_r = this->get_parameter("ki_r").get_parameter_value().get<float>();
+        Kd_r = this->get_parameter("kd_r").get_parameter_value().get<float>();
+
+        Kp_s = this->get_parameter("kp_s").get_parameter_value().get<float>();
+        Ki_s = this->get_parameter("ki_s").get_parameter_value().get<float>();
+        Kd_s = this->get_parameter("kd_s").get_parameter_value().get<float>();
 
         //Publishers
         // sur le topic commande des moteurs
@@ -28,7 +44,7 @@ public:
         subscription_motors_feedback_ = this->create_subscription<interfaces::msg::MotorsFeedback>(
                 "motors_feedback", 10, std::bind(&asservissement::motorsFeedbackCallback, this, _1));
 
-//        //Users input
+        //Users input
         subscription_brain_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
                 "brain_order", 10, std::bind(&asservissement::executeAngleCmd, this, _1));
 
@@ -55,20 +71,30 @@ private:
     //Data for motor feedback
     uint8_t steeringPwmCmd;
 
-    //left wheel PID corrector parameters
-    float Kp;
-    float Ki;
-
     //Timer
     rclcpp::TimerBase::SharedPtr timer_;
+
+    //Parameter declarations
+    //left wheel PID corrector parameters
+    float Kp_l;
+    float Ki_l;
+    float Kd_l;
+    //right wheel PID corrector parameters
+    float Kp_r;
+    float Ki_r;
+    float Kd_r;
+    //steering PID correcto paramers
+    float Kp_s;
+    float Ki_s;
+    float Kd_s;
+
 
     /*
      * Callback to execute the angle cmd of the brain when order is sent
      */
     void executeAngleCmd(const interfaces::msg::AngleOrder & angle)
     {
-        RCLCPP_INFO(this->get_logger(), "Valeur Kp : %f", Kp);
-        RCLCPP_INFO(this->get_logger(), "Valeur Ki : %f", Ki);
+
     }
 
     /*
@@ -84,8 +110,28 @@ private:
      */
     void updateParameters()
     {
-        Kp = this->get_parameter("kp").get_parameter_value().get<float>();
-        Ki = this->get_parameter("ki").get_parameter_value().get<float>();
+        Kp_l = this->get_parameter("kp_l").get_parameter_value().get<float>();
+        Ki_l = this->get_parameter("ki_l").get_parameter_value().get<float>();
+        Kd_l = this->get_parameter("kd_l").get_parameter_value().get<float>();
+
+        Kp_r = this->get_parameter("kp_r").get_parameter_value().get<float>();
+        Ki_r = this->get_parameter("ki_r").get_parameter_value().get<float>();
+        Kd_r = this->get_parameter("kd_r").get_parameter_value().get<float>();
+
+        Kp_s = this->get_parameter("kp_s").get_parameter_value().get<float>();
+        Ki_s = this->get_parameter("ki_s").get_parameter_value().get<float>();
+        Kd_s = this->get_parameter("kd_s").get_parameter_value().get<float>();
+
+        //Print all to log
+//        RCLCPP_INFO(this->get_logger(), "Valeur Kp l : %f", Kp_l);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Ki l : %f", Ki_l);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Kd l : %f", Kd_l);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Kp r : %f", Kp_r);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Ki r : %f", Ki_r);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Kd r : %f", Kd_r);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Kp s : %f", Kp_s);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Ki s : %f", Ki_s);
+//        RCLCPP_INFO(this->get_logger(), "Valeur Kd s : %f", Kd_s);
     }
 
 };
