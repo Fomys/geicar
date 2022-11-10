@@ -45,11 +45,14 @@ public:
                 "motors_feedback", 10, std::bind(&asservissement::motorsFeedbackCallback, this, _1));
 
         //Users input
-        subscription_brain_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
-                "brain_order", 10, std::bind(&asservissement::executeAngleCmd, this, _1));
+        subscription_angle_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
+                "angle_order", 10, std::bind(&asservissement::UpdateCmdAngle, this, _1));
+        subscription_speed_order_ = this->create_subscription<interfaces::msg::SpeedOrder>(
+                "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeed, this, _1));
 
         //Timer for update of parameters
-        timer_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
+        timer_parameter_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
+        timer_cmd_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
 
 
         //Inform the log the node has been launched
@@ -58,23 +61,46 @@ public:
 
 private:
 
+    /************ VARIABLE DECLARATIONS *******************/
+
+    //**ROS TOPIC & TIMERS DECLARATION**
     //Publishers
     rclcpp::Publisher<interfaces::msg::MotorsOrder>::SharedPtr publisher_can_;
 
     //Subscriptions
     rclcpp::Subscription<interfaces::msg::MotorsFeedback>::SharedPtr subscription_motors_feedback_;
-    rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_brain_order_;
-
-    //Requested angle by brain
-    int requestedSteerAngle = 0;
-
-    //Data for motor feedback
-    uint8_t steeringPwmCmd;
+    rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_angle_order_;
+    rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
 
     //Timer
-    rclcpp::TimerBase::SharedPtr timer_;
+    rclcpp::TimerBase::SharedPtr timer_parameter_;
+    rclcpp::TimerBase::SharedPtr timer_cmd_;
 
-    //Parameter declarations
+
+    //**VARIABLES FOR CONTROL**
+    //Requested commands by brain
+    float requestedSteerAngle = 0;
+    float requestedSpeed = 0;
+
+    //Data from motor feedback
+    float currentAngle ;
+    float currentRightRearSpeed;
+    float currentLeftRearSpeed;
+
+    //For PID Calculations
+    float sumIntegralLeft;
+    float sumIntegralRight;
+    float previousSpeedErrorLeft;
+    float previousSpeedErrorRight;
+
+    //**Control variables**
+    uint8_t leftRearPwmCmd;
+    uint8_t rightRearPwmCmd;
+    uint8_t steeringPwmCmd;
+    float cmd_RearSpeed;
+
+
+    //**PARAMETER DECLARATIONS**
     //left wheel PID corrector parameters
     float Kp_l;
     float Ki_l;
@@ -89,12 +115,26 @@ private:
     float Kd_s;
 
 
-    /*
-     * Callback to execute the angle cmd of the brain when order is sent
-     */
-    void executeAngleCmd(const interfaces::msg::AngleOrder & angle)
-    {
+    /************ FUNCTION DECLARATIONS *******************/
 
+    //** CALLBACK FUNCTIONS TO UPDATE INTERNAL VARIABLES **
+
+    /*
+     * Callback to update the angle command value by
+     */
+    void UpdateCmdAngle(const interfaces::msg::AngleOrder & angle)
+    {
+        requestedSteerAngle = angle.angle_order;
+        RCLCPP_INFO(this->get_logger(), "Valeur Angle : %f", requestedSteerAngle);
+
+
+    }
+
+
+    void UpdateCmdSpeed(const interfaces::msg::SpeedOrder & speed)
+    {
+        requestedSpeed  = speed.speed_order;
+        RCLCPP_INFO(this->get_logger(), "Valeur Speed : %f", requestedSpeed);
     }
 
     /*
@@ -102,7 +142,12 @@ private:
      */
     void motorsFeedbackCallback(const interfaces::msg::MotorsFeedback & motorsFeedback)
     {
-
+        currentAngle = motorsFeedback.steering_angle;
+        currentRightRearSpeed = motorsFeedback.right_rear_speed;
+        currentLeftRearSpeed = motorsFeedback.left_rear_speed;
+        RCLCPP_INFO(this->get_logger(), "Valeur currentAngle : %f", currentAngle);
+        RCLCPP_INFO(this->get_logger(), "Valeur currentRightRearSpeed : %f", currentRightRearSpeed);
+        RCLCPP_INFO(this->get_logger(), "Valeur currentLeftRearSpeed : %f", currentLeftRearSpeed);
     }
 
     /*

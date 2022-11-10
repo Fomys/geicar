@@ -20,12 +20,14 @@
 #include "interfaces/msg/motors_feedback.hpp"
 #include "interfaces/msg/motors_feedback.hpp"
 #include "interfaces/msg/angle_order.hpp"
+#include "interfaces/msg/speed_order.hpp"
 
 //STD
 #include "std_srvs/srv/empty.hpp"
 
 //Defines
 #define PERIOD_UPDATE_PARAM 1000ms //to update params every second
+#define PERIOD_UPDATE_CMD 1ms //to execute cmd by brain every ms
 
 
 
