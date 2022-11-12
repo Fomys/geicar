@@ -47,12 +47,12 @@ class ObstacleDetection(Node):
         self.usDistance[4] = msg.rear_center
         self.usDistance[5] = msg.rear_right
 
-        self.get_logger().info('Distance front left: "%i" cm' % self.usDistance[0])
-        self.get_logger().info('Distance front center: "%i" cm' % self.usDistance[1])
-        self.get_logger().info('Distance front right: "%i" cm' % self.usDistance[2])
-        self.get_logger().info('Distance rear left: "%i" cm' % self.usDistance[3])
-        self.get_logger().info('Distance rear center: "%i" cm' % self.usDistance[4])
-        self.get_logger().info('Distance rear right: "%i" cm' % self.usDistance[5])
+#        self.get_logger().info('Distance front left: "%i" cm' % self.usDistance[0])
+#        self.get_logger().info('Distance front center: "%i" cm' % self.usDistance[1])
+#        self.get_logger().info('Distance front right: "%i" cm' % self.usDistance[2])
+#        self.get_logger().info('Distance rear left: "%i" cm' % self.usDistance[3])
+#        self.get_logger().info('Distance rear center: "%i" cm' % self.usDistance[4])
+#        self.get_logger().info('Distance rear right: "%i" cm' % self.usDistance[5])
 
         #self.motors_order_.left_rear_pwm = 100
         #self.motors_order_.right_rear_pwm = 100

@@ -60,24 +60,25 @@ class Security(Node):
         #     self.publisher_can_.publish(self.motors_order_)
 
     def speed_input_callback(self, speedinput):
-        self.get_logger().info(f'Desired input speed: {self.speedinput}')
+        self.get_logger().info(f'Desired input speed: {speedinput.speed_order_input}')
 
         if self.stop_car_msg[0] == True:
-            self.speed_ = 0 #RPM
+            self.speed_.speed_order = 0.0 #RPM
             self.publisher_speed_order_.publish(self.speed_)
 
-        if self.motors_order_[1] == True:
-            if self.speedinput <= -30:
-                self.speed_ = max(self.speedinput, -30) #RPM
+        elif self.stop_car_msg[1] == True:
+            if speedinput.speed_order_input <= -30.0:
+                self.speed_.speed_order = max(speedinput.speed_order_input, -30.0) #RPM
                 self.publisher_speed_order_.publish(self.speed_)
 
-        if self.motors_order_[2] == True:
-            if self.speedinput >= 30:
-                self.speed_ = min(self.speedinput, 30) #RPM
+        elif self.stop_car_msg[2] == True:
+            if speedinput.speed_order_input >= 30.0:
+                self.speed_.speed_order = min(speedinput.speed_order_input, 30.0) #RPM
                 self.publisher_speed_order_.publish(self.speed_)
 
-        if (self.stop_car_msg[0] == False) and (self.stop_car_msg[1] == False) and  (self.stop_car_msg[2] == False):
-            self.speed_ = self.speedinput
+        else:
+#if (self.stop_car_msg[0] == False) and (self.stop_car_msg[1] == False) and  (self.stop_car_msg[2] == False):
+            self.speed_.speed_order = speedinput.speed_order_input
             self.publisher_speed_order_.publish(self.speed_)
 
 
