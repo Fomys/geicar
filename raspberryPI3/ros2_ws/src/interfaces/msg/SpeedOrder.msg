@@ -1,1 +1,1 @@
-float32 speed_order # Speed order for car
+float32 speed_order # Speed order for car input in asservissement node

@@ -13,6 +13,11 @@ find_package(builtin_interfaces REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 
 set(msg_files
+  "msg/SpeedOrder.msg"
+  "msg/StopCar.msg"
+  "msg/SpeedInput.msg"
+  "msg/AngleOrder.msg"
+  "msg/DistanceOrder.msg"
   "msg/JoystickOrder.msg"
   "msg/MotorsOrder.msg"
   "msg/MotorsFeedback.msg"
