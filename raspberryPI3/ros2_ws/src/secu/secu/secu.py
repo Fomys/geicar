@@ -8,7 +8,7 @@ from interfaces.msg import SpeedInput
 
 class Security(Node):
 
-    def __int__(self):
+    def __init__(self):
         super().__init__('secu')
 
         #Variables
