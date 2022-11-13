@@ -68,23 +68,25 @@ class ObstacleDetection(Node):
 
                 #if self.motors_order_.right_rear_pwm < 30:
                 #        self.motors_order_.right_rear_pwm = 30
+        self.stop_.slow_front = False
+        self.stop_.slow_rear  = False
+        self.stop_.stop_car = False
 
         for i in range(0, 3):
             if self.usDistance[i] < 50:
                 self.stop_.slow_front = True
-                self.stop_car_.publish(self.stop_.slow_front)
 
         for i in range(3, 6):
             if self.usDistance[i] < 50:
                 self.stop_.slow_rear = True
-                self.stop_car_.publish(self.stop_.slow_rear)
 
         for i in range (0, 6):
             if self.usDistance[i] < 20:
                 self.stop_.stop_car = True
-                self.stop_car_.publish(self.stop_.stop_car)
 
-       # self.publisher_can_.publish(self.motors_order_)
+        self.stop_car_.publish(self.stop_)
+
+        # self.publisher_can_.publish(self.motors_order_)
         self.get_logger().info(f'Publishing to secu node: {self.stop_}')
         #self.i += 1
 
