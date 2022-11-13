@@ -13,11 +13,11 @@ public:
         //PID of the motor of the left wheel
         this->declare_parameter("kp_l", 1.0);
         this->declare_parameter("ki_l", 0.01);
-        this->declare_parameter("kd_l", 0);
+        this->declare_parameter("kd_l", 0.0);
         //PID of the motor of the right wheel
         this->declare_parameter("kp_r", 1.0);
         this->declare_parameter("ki_r", 0.01);
-        this->declare_parameter("kd_r", 0);
+        this->declare_parameter("kd_r", 0.0);
         //PID of the motor of direction
         this->declare_parameter("kp_s", 1.0);
         this->declare_parameter("ki_s", 1.0);
@@ -208,8 +208,8 @@ private:
         float rightPwmCmd;
 
         //Computation of the error for Kp
-        speedErrorLeft = cmd_RearSpeed - currentLeftRearSpeed;
-        speedErrorRight = cmd_RearSpeed - currentRightRearSpeed;
+        speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
+        speedErrorRight = requestedSpeed - currentRightRearSpeed;
 
         //Computation of the error for Ki
         sumIntegralLeft += speedErrorLeft;
