@@ -1,0 +1,2 @@
+bool socket_connected
+bool stm32f103_connected

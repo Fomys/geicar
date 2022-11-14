@@ -18,15 +18,9 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    can_rx_node = Node(
+    can_node = Node(
         package="can",
-        executable="can_rx_node",
-        emulate_tty=True
-    )
-
-    can_tx_node = Node(
-        package="can",
-        executable="can_tx_node",
+        executable="can_node",
         emulate_tty=True
     )
 
@@ -62,8 +56,7 @@ def generate_launch_description():
 
     ld.add_action(joystick_node)
     ld.add_action(joystick_to_cmd_node)
-    ld.add_action(can_rx_node)
-    ld.add_action(can_tx_node)
+    ld.add_action(can_node)
     ld.add_action(car_control_node)
     ld.add_action(imu_filter_madgwick_node)
     ld.add_action(system_check_node)

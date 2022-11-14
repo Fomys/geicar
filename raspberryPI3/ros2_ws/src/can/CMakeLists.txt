@@ -15,28 +15,18 @@ find_package(interfaces REQUIRED)
 # further dependencies manually.
 # find_package(<dependency> REQUIRED)
 
-add_executable(can_rx_node src/can_rx_node.cpp)
-ament_target_dependencies(can_rx_node rclcpp std_msgs sensor_msgs interfaces)
-
-add_executable(can_tx_node src/can_tx_node.cpp)
-ament_target_dependencies(can_tx_node rclcpp std_msgs interfaces)
+add_executable(can_node src/can_node.cpp)
+ament_target_dependencies(can_node rclcpp std_msgs interfaces)
 
 
-target_include_directories(can_rx_node PUBLIC
+target_include_directories(can_node PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-target_compile_features(can_rx_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
-
-target_include_directories(can_tx_node PUBLIC
-  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-  $<INSTALL_INTERFACE:include>)
-target_compile_features(can_tx_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+target_compile_features(can_node PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
 
 
-install(TARGETS can_rx_node
-  DESTINATION lib/${PROJECT_NAME})
 
-install(TARGETS can_tx_node
+install(TARGETS can_node
   DESTINATION lib/${PROJECT_NAME})
   
 

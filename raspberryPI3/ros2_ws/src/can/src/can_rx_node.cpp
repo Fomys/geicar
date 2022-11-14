@@ -36,7 +36,6 @@ public:
         publisher_motorsFeedback_ = this->create_publisher<interfaces::msg::MotorsFeedback>("motors_feedback", 10);
         publisher_generalData_ = this->create_publisher<interfaces::msg::GeneralData>("general_data", 10);
         publisher_steeringCalibration_ = this->create_publisher<interfaces::msg::SteeringCalibration>("steering_calibration", 10);
-        publisher_systemCheck_ = this->create_publisher<interfaces::msg::SystemCheck>("system_check", 10);
 
 
         if (initCommunication()==0){
@@ -98,29 +97,7 @@ private:
                 RCLCPP_DEBUG(this->get_logger(), "Read value (Data) : %02X", frame.data[i]);
 
             
-            if (frame.can_id==ID_MOTORS_DATAS){
-                auto motorsFeedbackMsg = interfaces::msg::MotorsFeedback();
-
-                //Update odometry
-                motorsFeedbackMsg.left_rear_odometry = frame.data[0];
-                motorsFeedbackMsg.right_rear_odometry = frame.data[1];
-
-                //Update Motors speed
-                float leftSpeedMes = (frame.data[2] << 8) + frame.data[3];
-                float rightSpeedMes = (frame.data[4] << 8) + frame.data[5];
-
-                motorsFeedbackMsg.left_rear_speed = 0.01 * leftSpeedMes ; 
-                motorsFeedbackMsg.right_rear_speed = 0.01 * rightSpeedMes ; 
-
-                //Update Steering Angle
-                int steer = frame.data[6];  //Receive steer in [0;200]
-                motorsFeedbackMsg.steering_angle = (steer - 100.0)/100.0; //Convert steer in [-1;1]
-
-
-                //Publication on topics
-                RCLCPP_DEBUG(this->get_logger(), "Publishing to motors_feedback and general_data topics");
-                publisher_motorsFeedback_->publish(motorsFeedbackMsg);
-
+            if (frame.can_id==ID_MOTORS_DATAS) {
 
             } else if (frame.can_id == ID_CALIBRATION_MODE){
                 auto calibrationMsg = interfaces::msg::SteeringCalibration();
@@ -142,46 +119,24 @@ private:
 
                 publisher_steeringCalibration_->publish(calibrationMsg);
 
-            }else if (frame.can_id==ID_COMM_CHECKING){
-
+            } else if (frame.can_id==ID_COMM_CHECKING){
                 if (frame.data[1]==COMM_F103_ACK){
                     auto systemCheckMsg = interfaces::msg::SystemCheck();
                     systemCheckMsg.response = true;
                     systemCheckMsg.f103 = true;
                     publisher_systemCheck_->publish(systemCheckMsg);
 
-                }else if (frame.data[1]==COMM_L476_ACK){
+                } else if (frame.data[1]==COMM_L476_ACK){
                     auto systemCheckMsg = interfaces::msg::SystemCheck();
                     systemCheckMsg.response = true;
                     systemCheckMsg.l476 = true;
                     publisher_systemCheck_->publish(systemCheckMsg);
                 }
                 
-            }else if (frame.can_id==ID_US1){
+            } else if (frame.can_id==ID_US1){
 
-                usFrontLeft = (frame.data[0]<<8) + frame.data[1];
-                usFrontCenter = (frame.data[2]<<8) + frame.data[3];
-                usFrontRight = (frame.data[4]<<8) + frame.data[5];
-
-            }else if (frame.can_id==ID_US2){
-                RCLCPP_DEBUG(this->get_logger(), "Publishing to us_data Topic");
-                auto us_msg = interfaces::msg::Ultrasonic();
-
-                usRearLeft = (frame.data[0]<<8) + frame.data[1];
-                usRearCenter = (frame.data[2]<<8) + frame.data[3];
-                usRearRight = (frame.data[4]<<8) + frame.data[5];
-
-                us_msg.front_center = usFrontCenter;
-                us_msg.front_left = usFrontLeft;
-                us_msg.front_right = usFrontRight;
-
-                us_msg.rear_center = usRearCenter;
-                us_msg.rear_left = usRearLeft;
-                us_msg.rear_right = usRearRight;
-
-                publisher_us_->publish(us_msg);
-
-            }else if (frame.can_id==ID_GPS1){
+            } else if (frame.can_id==ID_US2){
+            } else if (frame.can_id==ID_GPS1){
                 latitude = frame.data[0] + frame.data[1]/pow(10,2) + frame.data[2]/pow(10,4) + frame.data[3]/pow(10,6) + frame.data[4]/pow(10,8);
                 latitude += frame.data[5]/pow(10,10) + frame.data[6]/pow(10,12) + frame.data[7]/pow(10,14);
 

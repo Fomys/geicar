@@ -1,0 +1,6 @@
+uint8 CAN_SOCKET_NOT_RUNNING=0
+uint8 CAN_SOCKET_CONNECTED=1
+uint8 CAN_SOCKET_DISCONNECTED=2
+
+uint8 can_socket_connected
+bool stm32f103_connected

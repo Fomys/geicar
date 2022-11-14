@@ -36,3 +36,4 @@ install/
 log/
 .idea/
 *.egg-info
+cmake-build-debug

@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Status{% endblock %}
+
+{% block body %}
+    <table class="status">
+    <thead>
+        <tr>
+            <th>Élément</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+        <tbody>
+            <tr id="can_status">
+                <td>Socket CAN</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="stm32f103_status">
+                <td>STM32F103 status</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="speed_left">
+                <td>Speed left</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="speed_right">
+                <td>Speed right</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="steering_angle">
+                <td>Steering angle</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="left_rear_odometry">
+                <td>Left rear odometry</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="right_rear_odometry">
+                <td>Right rear odometry</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="ultrasonic_back_right">
+                <td>Ultrasonic back right</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="ultrasonic_back_center">
+                <td>Ultrasonic back center</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="ultrasonic_back_left">
+                <td>Ultrasonic back center</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="ultrasonic_front_right">
+                <td>Ultrasonic front right</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="ultrasonic_front_center">
+                <td>Ultrasonic front center</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="ultrasonic_front_left">
+                <td>Ultrasonic front center</td>
+                <td class="status"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
+    <script>
+        let socket = io();
+
+        socket.on('status', function(msg) {
+            for(var key in msg) {
+                if (msg.hasOwnProperty(key)) {
+                    let tr = document.getElementById(key);
+                    if(tr !== null) {
+                        let span = tr.getElementsByClassName("status").item(0);
+                        tr.className = 'status-' + msg[key].state;
+                        span.innerText = msg[key].text;
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}
