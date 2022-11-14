@@ -25,11 +25,7 @@ set(msg_files
   "msg/SteeringCalibration.msg"
   "msg/Ultrasonic.msg"
   "msg/Gnss.msg"
-  "msg/SystemCheck.msg"
-  "msg/AngleOrder.msg"
-  "msg/DistanceOrder.msg"
-  "msg/SpeedOrder.msg"
-  "msg/StopCar.msg")
+  "msg/SystemCheck.msg")
 
 rosidl_generate_interfaces(${PROJECT_NAME}
         ${msg_files}
