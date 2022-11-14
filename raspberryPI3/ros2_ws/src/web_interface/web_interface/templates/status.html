@@ -41,6 +41,7 @@
         socket.on('status', function(msg) {
             for(var key in msg) {
                 if (msg.hasOwnProperty(key)) {
+                    console.log(msg);
                     let tr = document.getElementById(key);
                     if(tr !== null) {
                         let span = tr.getElementsByClassName("status").item(0);
