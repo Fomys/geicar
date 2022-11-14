@@ -31,7 +31,7 @@ class Security(Node):
     def stop_car_callback(self, msg: StopCar):
         # stock StopCar msg value in array
         self.stop_ = msg
-        self.get_logger().info('CALLBACK')
+        #self.get_logger().info('CALLBACK')
 
     def speed_input_callback(self, speed_input: SpeedInput):
         # Variables

@@ -7,7 +7,7 @@ from interfaces.msg import StopCar
 
 
 class ObstacleDetection(Node):
-    MINIMAL_DISTANCE = 20
+    MINIMAL_DISTANCE = 30
     CAUTION_DISTANCE = 50
 
     def __init__(self):
@@ -42,6 +42,7 @@ class ObstacleDetection(Node):
                 or msg.rear_left < self.MINIMAL_DISTANCE \
                 or msg.rear_center < self.MINIMAL_DISTANCE \
                 or msg.rear_right < self.MINIMAL_DISTANCE:
+            self.get_logger().info('CSTOP')
             stop.stop_car = True
 
         self.publish_stop_car.publish(stop)
