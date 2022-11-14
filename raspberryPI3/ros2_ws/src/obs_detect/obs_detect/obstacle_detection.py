@@ -46,7 +46,7 @@ class ObstacleDetection(Node):
             self.stop.stop_car = True
             self.get_logger().info(f'Stop : {self.stop.stop_car}')
 
-        self.publish_stop_car.publish(stop)
+        self.publish_stop_car.publish(self.stop)
 
 
 def main(args=None):
