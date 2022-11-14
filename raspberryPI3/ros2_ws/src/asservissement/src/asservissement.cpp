@@ -10,14 +10,15 @@ public:
     {
 
         //Parameter declaration for gains in PID
+        //PID of the motor of the left wheel
         this->declare_parameter("kp_l", 1.0);
-        this->declare_parameter("ki_l", 1.0);
-        this->declare_parameter("kd_l", 1.0);
-
+        this->declare_parameter("ki_l", 0.01);
+        this->declare_parameter("kd_l", 0.0);
+        //PID of the motor of the right wheel
         this->declare_parameter("kp_r", 1.0);
-        this->declare_parameter("ki_r", 1.0);
-        this->declare_parameter("kd_r", 1.0);
-
+        this->declare_parameter("ki_r", 0.01);
+        this->declare_parameter("kd_r", 0.0);
+        //PID of the motor of direction
         this->declare_parameter("kp_s", 1.0);
         this->declare_parameter("ki_s", 1.0);
         this->declare_parameter("kd_s", 1.0);
@@ -52,7 +53,7 @@ public:
 
         //Timer for update of parameters
         timer_parameter_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
-        timer_cmd_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::executeCmd, this));
+        timer_cmd_ = this->create_wall_timer(PERIOD_UPDATE_CMD, std::bind(&asservissement::executeCmd, this));
 
 
         //Inform the log the node has been launched
@@ -109,7 +110,7 @@ private:
     float Kp_r;
     float Ki_r;
     float Kd_r;
-    //steering PID correcto paramers
+    //steering PID corrector parameters
     float Kp_s;
     float Ki_s;
     float Kd_s;
@@ -126,8 +127,6 @@ private:
     {
         requestedSteerAngle = angle.angle_order;
         RCLCPP_INFO(this->get_logger(), "Valeur Angle : %f", requestedSteerAngle);
-
-
     }
 
 
@@ -180,11 +179,88 @@ private:
     }
 
     /*
-     * Function executing the PID controller
+     * Function executing the PID controller every PERIOD_UPDATE_CMD = 1ms currently
      */
     void executeCmd()
     {
         //TODO : Implement Command
+        auto motorsOrder = interfaces::msg::MotorsOrder();
+        //Asservissement roues
+        asservSpeed();
+        motorsOrder.left_rear_pwm = leftRearPwmCmd;
+        motorsOrder.right_rear_pwm = rightRearPwmCmd;
+        //Asservissement steering
+        asservSteering();
+        motorsOrder.steering_pwm = steeringPwmCmd;
+        publisher_can_->publish(motorsOrder);
+    }
+
+
+    void asservSpeed ()
+    {
+        float speedErrorLeft;
+        float speedErrorRight;
+
+        float deltaErrorLeft;
+        float deltaErrorRight ;
+
+        float leftPwmCmd;
+        float rightPwmCmd;
+
+        //Computation of the error for Kp
+        speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
+        speedErrorRight = requestedSpeed - currentRightRearSpeed;
+
+        //Computation of the error for Ki
+        sumIntegralLeft += speedErrorLeft;
+        sumIntegralRight += speedErrorRight;
+
+        //Computation of the error for Kd
+        deltaErrorLeft = speedErrorLeft - previousSpeedErrorLeft;
+        deltaErrorRight = speedErrorRight - previousSpeedErrorRight;
+        previousSpeedErrorLeft = speedErrorLeft;
+        previousSpeedErrorRight = speedErrorRight;
+
+        //Computation of the command that must be sent to the motors
+        leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+        rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+
+        //In order to avoid breaking the motor,
+        // we prevent the motors to spin backwards (The command must be greater than 50.)
+        if(leftPwmCmd < 0)
+            leftPwmCmd = 0;
+        else if(leftPwmCmd > 50)
+            leftPwmCmd = 50;
+
+        if(rightPwmCmd < 0)
+            rightPwmCmd = 0;
+        else if(rightPwmCmd > 50)
+            rightPwmCmd = 50;
+
+        //Set the offset, because cmd = [0 : 50] goes backwards
+        // And cmd = [50 : 100] goes forwards
+        leftPwmCmd += 50;
+        rightPwmCmd += 50;
+        leftRearPwmCmd = leftPwmCmd;
+        rightRearPwmCmd = rightPwmCmd;
+    }
+
+    void asservSteering ()
+    {
+        float errorAngle = currentAngle - requestedSteerAngle;
+        //Command's calculation
+        if (abs(errorAngle)<TOLERANCE_ANGLE){
+            steeringPwmCmd = STOP;
+        }
+        else {
+            if (errorAngle>0) {
+                steeringPwmCmd = MAX_PWM_LEFT;
+            }
+            else {
+                steeringPwmCmd = MAX_PWM_RIGHT;
+            }
+        }
+
     }
 
 };
