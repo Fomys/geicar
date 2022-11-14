@@ -10,12 +10,12 @@ class Security(Node):
     STOP_SPEED = 0.0  # RPM
     CAUTIOUS_SPEED_REAR = -30.0  # RPM
     CAUTIOUS_SPEED_FRONT = 30.0  # RPM
-
     def __init__(self):
         super().__init__('secu')
 
         # Variables
         self.stop_ = StopCar()
+        self.speed_input = SpeedInput()
 
         # Publishers
         # Publish to SpeedOrder
@@ -30,29 +30,45 @@ class Security(Node):
 
     def stop_car_callback(self, msg: StopCar):
         # stock StopCar msg value in array
+        speed_ = SpeedOrder()
         self.stop_ = msg
         #self.get_logger().info('CALLBACK')
 
-    def speed_input_callback(self, speed_input: SpeedInput):
-        # Variables
-        speed_ = SpeedOrder()
-        speed_.speed_order = speed_input.speed_order_input
+        #self.get_logger().info(f'Desired input speed: {speed_input.speed_order_input}')
 
-        self.get_logger().info(f'Desired input speed: {speed_input.speed_order_input}')
-
-        self.get_logger().info(f'Stop : {self.stop_.stop_car}')
+        #self.get_logger().info(f'Stop : {self.stop_.stop_car}')
 
         if self.stop_.stop_car:
             speed_.speed_order = self.STOP_SPEED
-            self.get_logger().info('STOP!!!!')
+            #self.get_logger().info('STOP!!!!')
 
         else:
             if self.stop_.slow_rear:
-                speed_.speed_order = max(speed_input.speed_order_input, self.CAUTIOUS_SPEED_REAR)  # RPM
+                speed_.speed_order = max(self.speed_input.speed_order_input, self.CAUTIOUS_SPEED_REAR)  # RPM
             if self.stop_.slow_front:
-                speed_.speed_order = min(speed_input.speed_order_input, self.CAUTIOUS_SPEED_FRONT)  # RPM
+                speed_.speed_order = min(self.speed_input.speed_order_input, self.CAUTIOUS_SPEED_FRONT)  # RPM
 
         self.publisher_speed_order_.publish(speed_)
+
+    def speed_input_callback(self, speed_input: SpeedInput):
+        # Variables
+        self.speed_input = speed_input
+
+        # self.get_logger().info(f'Desired input speed: {speed_input.speed_order_input}')
+        #
+        # self.get_logger().info(f'Stop : {self.stop_.stop_car}')
+        #
+        # if self.stop_.stop_car:
+        #     speed_.speed_order = self.STOP_SPEED
+        #     self.get_logger().info('STOP!!!!')
+        #
+        # else:
+        #     if self.stop_.slow_rear:
+        #         speed_.speed_order = max(speed_input.speed_order_input, self.CAUTIOUS_SPEED_REAR)  # RPM
+        #     if self.stop_.slow_front:
+        #         speed_.speed_order = min(speed_input.speed_order_input, self.CAUTIOUS_SPEED_FRONT)  # RPM
+        #
+        # self.publisher_speed_order_.publish(speed_)
 
 
 def main(args=None):
