@@ -40,6 +40,8 @@ class Security(Node):
 
         self.get_logger().info(f'Desired input speed: {speed_input.speed_order_input}')
 
+        self.get_logger().info(f'Stop : {self.stop_.stop_car}')
+
         if self.stop_.stop_car:
             speed_.speed_order = self.STOP_SPEED
             self.get_logger().info('STOP!!!!')
