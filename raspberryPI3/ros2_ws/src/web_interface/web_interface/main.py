@@ -34,23 +34,29 @@ class WebInterfaceNode(Node):
 
     def on_stop_car(self, stop):
         s = {
-            "stop_car": stop.stop_car,
-            "slow_rear": stop.slow_rear,
-            "slow_front": stop.slow_front
+            "stop_car": {"status": "good", "text": str(stop.stop_car)},
+            "slow_rear": {"status": "good", "text": str(stop.slow_rear)},
+            "slow_front": {"status": "good", "text": str(stop.slow_front)},
         }
         self.status.update(s)
         self.socket_io.emit("status", s)
 
     def on_speed_order(self, order):
         s = {
-            "speed_order": order.speed_order
+            "speed_order": {
+                "status": "good",
+                "text": str(order.speed_order)
+            }
         }
         self.status.update(s)
         self.socket_io.emit("status", s)
 
     def on_speed_order_input(self, order):
         s = {
-            "speed_order_input": order.speed_order_input
+            "speed_order_input": {
+                "status": "good",
+                "text": str(order.speed_order_input)
+            }
         }
         self.status.update(s)
         self.socket_io.emit("status", s)

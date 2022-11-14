@@ -19,7 +19,7 @@
         socket.on('status', function(msg) {
             if(msg.hasOwnProperty("speed_order")) {
                 let span = document.getElementById("speed_order");
-                span.innerText = msg["speed_order"];
+                span.innerText = msg["speed_order"].text;
             }
         });
     </script>
