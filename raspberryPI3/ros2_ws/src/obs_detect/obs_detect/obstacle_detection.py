@@ -10,10 +10,6 @@ class ObstacleDetection(Node):
     MINIMAL_DISTANCE = 30
     CAUTION_DISTANCE = 50
 
-    stop = StopCar()
-    stop.slow_front = False
-    stop.slow_rear = False
-    stop.stop_car = False
 
     def __init__(self):
         super().__init__('obstacle_detection')
@@ -27,15 +23,22 @@ class ObstacleDetection(Node):
 
     def us_callback(self, msg: Ultrasonic):
 
+        stop = StopCar()
+
         if msg.front_left < self.CAUTION_DISTANCE \
                 or msg.front_center < self.CAUTION_DISTANCE \
                 or msg.front_right < self.CAUTION_DISTANCE:
-            self.stop.slow_front = True
+            stop.slow_front = True
+        else :
+            stop.slow_front = False
+
 
         if msg.rear_left < self.CAUTION_DISTANCE \
                 or msg.rear_center < self.CAUTION_DISTANCE \
                 or msg.rear_right < self.CAUTION_DISTANCE:
-            self.stop.slow_rear = True
+            stop.slow_rear = True
+        else :
+            stop.slow_rear = False
 
         if msg.front_left < self.MINIMAL_DISTANCE \
                 or msg.front_center < self.MINIMAL_DISTANCE \
@@ -43,10 +46,12 @@ class ObstacleDetection(Node):
                 or msg.rear_left < self.MINIMAL_DISTANCE \
                 or msg.rear_center < self.MINIMAL_DISTANCE \
                 or msg.rear_right < self.MINIMAL_DISTANCE:
-            self.stop.stop_car = True
-            self.get_logger().info(f'Stop : {self.stop.stop_car}')
+            stop.stop_car = True
+            self.get_logger().info(f'Stop : {stop.stop_car}')
+        else :
+            stop.stop_car = False
 
-        self.publish_stop_car.publish(self.stop)
+        self.publish_stop_car.publish(stop)
 
 
 def main(args=None):
