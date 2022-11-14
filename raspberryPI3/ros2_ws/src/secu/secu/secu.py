@@ -26,12 +26,12 @@ class Security(Node):
         self.subscription_stop_car_ = self.create_subscription(StopCar, 'stop_car', self.stop_car_callback, 10)
 
         # subscribe to SpeedOrder topic
-        self.subscription_speed_input_ = self.create_subscription(SpeedInput, 'speed_input', self.speed_input_callback,
-                                                                  10)
+        self.subscription_speed_input_ = self.create_subscription(SpeedInput, 'speed_input', self.speed_input_callback, 10)
 
     def stop_car_callback(self, msg: StopCar):
         # stock StopCar msg value in array
         self.stop_ = msg
+        self.get_logger().info('CALLBACK')
 
     def speed_input_callback(self, speed_input: SpeedInput):
         # Variables
@@ -42,6 +42,7 @@ class Security(Node):
 
         if self.stop_.stop_car:
             speed_.speed_order = self.STOP_SPEED
+            self.get_logger().info('STOP!!!!')
 
         else:
             if self.stop_.slow_rear:
