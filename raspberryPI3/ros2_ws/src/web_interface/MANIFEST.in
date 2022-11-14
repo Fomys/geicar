@@ -1,0 +1,2 @@
+graft web_interface/templates
+graft web_interface/static
