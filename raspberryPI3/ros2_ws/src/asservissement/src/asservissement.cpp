@@ -133,7 +133,7 @@ private:
     void UpdateCmdSpeed(const interfaces::msg::SpeedOrder & speed)
     {
         requestedSpeed  = speed.speed_order;
-        RCLCPP_INFO(this->get_logger(), "Valeur Speed : %f", requestedSpeed);
+        //RCLCPP_INFO(this->get_logger(), "Valeur Speed : %f", requestedSpeed);
     }
 
     /*
@@ -183,7 +183,6 @@ private:
      */
     void executeCmd()
     {
-        //TODO : Implement Command
         auto motorsOrder = interfaces::msg::MotorsOrder();
         //Asservissement roues
         asservSpeed();

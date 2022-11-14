@@ -34,15 +34,8 @@ class Security(Node):
         speed_.speed_order = self.speed_input.speed_order_input
         self.stop_ = msg
 
-        #self.get_logger().info('CALLBACK')
-
-        #self.get_logger().info(f'Desired input speed: {speed_input.speed_order_input}')
-
-        self.get_logger().info(f'Stop : {self.stop_.stop_car}')
-
         if self.stop_.stop_car:
             speed_.speed_order = self.STOP_SPEED
-            #self.get_logger().info('STOP!!!!')
 
         else:
             if self.stop_.slow_rear:
@@ -55,23 +48,6 @@ class Security(Node):
     def speed_input_callback(self, speed_input: SpeedInput):
         # Variables
         self.speed_input = speed_input
-
-        # self.get_logger().info(f'Desired input speed: {speed_input.speed_order_input}')
-        #
-        # self.get_logger().info(f'Stop : {self.stop_.stop_car}')
-        #
-        # if self.stop_.stop_car:
-        #     speed_.speed_order = self.STOP_SPEED
-        #     self.get_logger().info('STOP!!!!')
-        #
-        # else:
-        #     if self.stop_.slow_rear:
-        #         speed_.speed_order = max(speed_input.speed_order_input, self.CAUTIOUS_SPEED_REAR)  # RPM
-        #     if self.stop_.slow_front:
-        #         speed_.speed_order = min(speed_input.speed_order_input, self.CAUTIOUS_SPEED_FRONT)  # RPM
-        #
-        # self.publisher_speed_order_.publish(speed_)
-
 
 def main(args=None):
     rclpy.init(args=args)
