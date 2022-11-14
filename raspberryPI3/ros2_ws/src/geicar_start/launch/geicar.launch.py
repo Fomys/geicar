@@ -36,6 +36,17 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    obstacle_detection = Node(
+        package="obs_detect",
+        executable="obstacle_detection",
+        emulate_tty=True
+    )
+
+    secu = Node(
+        package="secu",
+        executable="secu",
+        emulate_tty=True
+    )
     asservissement = Node(
         package="asservissement",
         executable="asservissement",
@@ -60,7 +71,8 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-
+    ld.add_action(secu)
+    ld.add_action(obstacle_detection)
     ld.add_action(joystick_node)
     ld.add_action(joystick_to_cmd_node)
     ld.add_action(can_rx_node)
