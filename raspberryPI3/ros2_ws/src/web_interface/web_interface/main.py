@@ -8,7 +8,7 @@ from flask_socketio import emit, SocketIO
 from rclpy.node import Node
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback
 import threading
 
 
@@ -28,6 +28,7 @@ class WebInterfaceNode(Node):
         self.rosout_subscription = self.create_subscription(Log, '/rosout', self.on_log, 10)
         self.stop_car_subscription = self.create_subscription(StopCar, '/stop_car', self.on_stop_car, 1)
         self.speed_order_subscription = self.create_subscription(SpeedOrder, "/speed_order", self.on_speed_order, 1)
+        self.motor_feedback_subscription = self.create_subscription(MotorsFeedback, "/motors_feedback", self.on_motors_feedback, 1)
         self.speed_order_input_subscription = self.create_subscription(SpeedInput, "/speed_order_input",
                                                                        self.on_speed_order_input, 1)
         self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 1)
@@ -47,6 +48,32 @@ class WebInterfaceNode(Node):
                 "status": "good",
                 "text": str(order.speed_order)
             }
+        }
+        self.status.update(s)
+        self.socket_io.emit("status", s)
+
+    def on_motors_feedback(self, feedback):
+        s = {
+            "left_rear_odometry": {
+                "status": "good",
+                "text": str(feedback.left_rear_odometry)
+            },
+            "right_rear_odometry": {
+                "status": "good",
+                "text": str(feedback.right_rear_odometry)
+            },
+            "left_rear_speed": {
+                "status": "good",
+                "text": str(feedback.left_rear_speed)
+            },
+            "right_rear_speed": {
+                "status": "good",
+                "text": str(feedback.right_rear_speed)
+            },
+            "steering_angle": {
+                "status": "good",
+                "text": str(feedback.steering_angl)
+            },
         }
         self.status.update(s)
         self.socket_io.emit("status", s)
