@@ -72,7 +72,7 @@ class WebInterfaceNode(Node):
             },
             "steering_angle": {
                 "status": "good",
-                "text": str(feedback.steering_angl)
+                "text": str(feedback.steering_angle)
             },
         }
         self.status.update(s)
