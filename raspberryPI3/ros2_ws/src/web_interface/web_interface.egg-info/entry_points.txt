@@ -1,0 +1,2 @@
+[console_scripts]
+web_interface = web_interface:main

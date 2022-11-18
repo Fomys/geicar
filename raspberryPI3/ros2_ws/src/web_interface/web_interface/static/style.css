@@ -1,0 +1,63 @@
+
+/*
+ #e42618
+ #f69f1d
+ #f5adaa
+ #f8f0ec
+ */
+
+:root {
+    --navbar-title-text-color: #e42618;
+    --navbar-background-color: #f5adaa;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+nav.main {
+    background-color: var(--navbar-background-color);
+    margin: 0;
+    padding: 10px;
+    max-width: 15%;
+    height: 100vh;
+    float: left;
+}
+
+nav.main .title {
+    color: var(--navbar-title-text-color);
+    text-align: center;
+}
+
+nav.main ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+
+
+
+
+
+
+table.logs .level-debug {
+    color: gray;
+}
+
+table.logs .level-info {
+    color: black;
+}
+
+table.logs .level-warn {
+    color: orange;
+}
+
+table.logs .level-error {
+    color: red;
+}
+
+table.logs .level-fatal {
+    color: darkred;
+}

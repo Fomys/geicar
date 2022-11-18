@@ -46,7 +46,6 @@ public:
         "steering_calibration", 10, std::bind(&car_control::steeringCalibrationCallback, this, _1));
 
 
-        
 
         server_calibration_ = this->create_service<std_srvs::srv::Empty>(
                             "steering_calibration", std::bind(&car_control::steeringCalibration, this, std::placeholders::_1, std::placeholders::_2));

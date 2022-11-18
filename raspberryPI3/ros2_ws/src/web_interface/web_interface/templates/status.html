@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Status{% endblock %}
+
+{% block body %}
+    <table class="status">
+    <thead>
+        <tr>
+            <th>Élément</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+        <tbody>
+            <tr id="stop_car">
+                <td>Stop car</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="slow_rear">
+                <td>Slow rear</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="slow_front">
+                <td>Slow front</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="speed_order">
+                <td>Speed order (RPM)</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="left_rear_odometry">
+                <td>Left rear odometry</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="right_rear_odometry">
+                <td>Right rear odometry</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="left_rear_speed">
+                <td>Left rear speed (RPM/s)</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="right_rear_speed">
+                <td>Right rear speed (RPM/s)</td>
+                <td class="status"></td>
+            </tr>
+            <tr id="steering_angle">
+                <td>Steering angle (no unit)</td>
+                <td class="status"></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
+    <script>
+        let socket = io();
+
+        socket.on('status', function(msg) {
+            for(var key in msg) {
+                if (msg.hasOwnProperty(key)) {
+                    console.log(msg);
+                    let tr = document.getElementById(key);
+                    if(tr !== null) {
+                        let span = tr.getElementsByClassName("status").item(0);
+                        tr.className = 'status-' + msg[key].state;
+                        span.innerText = msg[key].text;
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}
