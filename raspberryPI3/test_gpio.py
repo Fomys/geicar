@@ -4,19 +4,43 @@ Andrea P.
 '''
 
 import lgpio
+import time
+import numpy as np
 #global variable for state
 PackageIn = False
+time = 0
+i = 0
 
 #define the interrupt call back
-def button_callback():
+def button_callback(a, b, c, timestamp):
     global PackageIn
-    PackageIn = not PackageIn
-    print("Changement de valeur")
+    global time
+    global i 
+    #print("in") 
+    if (np.abs(timestamp - time) > 1000000000):
+        PackageIn = not PackageIn
+        print("Temps", time)
+        print(PackageIn)
+        print(i)
+        i += 1
+        time = timestamp
+    
+    #time.sleep(1)
 
 #Set up the pin 6 en pull down
 button = lgpio.gpiochip_open(0)
-lgpio.gpio_claim_input(button, 6, lFlags=lgpio.SET_PULL_DOWN)
+lgpio.gpio_claim_alert(button, 6, lgpio.FALLING_EDGE, lFlags=lgpio.SET_BIAS_PULL_DOWN)
 
 #Add callbac for rising edge (0 to 1)
-lgpio.callback(0, 6, lgpio.RISING_EDGE, button_callback)
+c =lgpio.callback(button, 6, lgpio.FALLING_EDGE, button_callback)
+
+while(True):
+    pass 
+    if (c.tally() > 1):
+        c.reset_tally()
+        print("Good") 
+    #print("Running")
+    #time.sleep(1)
+    #r = lgpio.gpio_read(button, 6)
+    #print("Result = ", r)
 
