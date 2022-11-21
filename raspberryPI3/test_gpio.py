@@ -3,7 +3,7 @@ Test script for GPIOs on Raspberry Pi
 Andrea P.
 '''
 
-import RPIO
+import lgpio
 #global variable for state
 PackageIn = False
 
@@ -14,10 +14,9 @@ def button_callback():
     print("Changement de valeur")
 
 #Set up the pin 6 en pull down
-RPIO.setup(6, RPIO.IN, pull_up_down=RPIO.PUD_DOWN)
+button = lgpio.gpiochip_open(0)
+lgpio.gpio_claim_input(button, 6, lFlags=SET_PULL_DOWN)
 
 #Add callbac for rising edge (0 to 1)
-RPIO.add_interrupt_callback(7, button_callback, edge='rising')
+lgpio.callback(0, 6, lgpio.RISING_EDGE, button_callback)
 
-#wait for rising edge
-RPIO.wait_for_interrupts()
