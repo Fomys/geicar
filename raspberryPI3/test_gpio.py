@@ -15,7 +15,7 @@ def button_callback():
 
 #Set up the pin 6 en pull down
 button = lgpio.gpiochip_open(0)
-lgpio.gpio_claim_input(button, 6, lFlags=SET_PULL_DOWN)
+lgpio.gpio_claim_input(button, 6, lFlags=lgpio.SET_PULL_DOWN)
 
 #Add callbac for rising edge (0 to 1)
 lgpio.callback(0, 6, lgpio.RISING_EDGE, button_callback)
