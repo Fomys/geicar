@@ -29,6 +29,7 @@ set(msg_files
 
 rosidl_generate_interfaces(${PROJECT_NAME}
         ${msg_files}
+        "srv/ButtonPressed.srv"
         )
 
 ament_export_dependencies(rosidl_default_runtime)

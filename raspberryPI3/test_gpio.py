@@ -36,11 +36,5 @@ c =lgpio.callback(button, 6, lgpio.FALLING_EDGE, button_callback)
 
 while(True):
     pass 
-    if (c.tally() > 1):
-        c.reset_tally()
-        print("Good") 
-    #print("Running")
-    #time.sleep(1)
-    #r = lgpio.gpio_read(button, 6)
-    #print("Result = ", r)
+
 

@@ -1,0 +1,1 @@
+bool packageIn = False # True if there is a package inside the car
