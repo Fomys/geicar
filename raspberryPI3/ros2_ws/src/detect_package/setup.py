@@ -11,7 +11,7 @@ setup(
             ['resource/' + package_name]),
         ('share/' + package_name, ['package.xml']),
     ],
-    install_requires=['setup   tools'],
+    install_requires=['setuptools'],
     zip_safe=True,
     maintainer='andrea',
     maintainer_email='andreaperezfdez@gmail.com',
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'service = detect_package.service_member_function:main'
+            'detect_package = detect_package.detect_package:main'
         ],
     },
 )
