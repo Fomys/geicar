@@ -15,11 +15,11 @@ class DetectPackage(Node):
         super().__init__('detect_package')
 
         #Create service to wait for the input of the package.
-        self.srv = self.create_service(ButtonPressed, 'add_two_ints', self.check_button)
+        self.srv = self.create_service(ButtonPressed, 'detect_package', self.check_button)
 
 
     def check_button(self, request, response):
-        self.get_logger().info('Incoming request\na: %d b: %d' % (request.a, request.b))
+        self.get_logger().info('Incoming request')
         self.done = False
         self.PackageIn = request.state_package
 
