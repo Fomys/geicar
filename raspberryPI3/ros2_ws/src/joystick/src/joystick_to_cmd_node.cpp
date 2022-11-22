@@ -79,8 +79,9 @@ private:
         buttonStart = joy.buttons[buttonsMap.find("START")->second];
         buttonB = joy.buttons[buttonsMap.find("B")->second];    
         buttonA = joy.buttons[buttonsMap.find("A")->second];  
-        buttonY = joy.buttons[buttonsMap.find("Y")->second]; 
-        
+        buttonY = joy.buttons[buttonsMap.find("Y")->second];
+        buttonX = joy.buttons[buttonsMap.find("X")->second];
+
 
         axisRT = joy.axes[axisMap.find("RT")->second];      //Motors (go forward)
         axisLT = joy.axes[axisMap.find("LT")->second];      //Motors (go backward)
@@ -95,8 +96,11 @@ private:
             buttonDpadLeft = true;
         else
             buttonDpadLeft = false;
-        
-        
+
+        if (joy.axes[axisMap.find("DPAD_X")->second] == -1.0)
+            buttonDpadRight = true;
+        else
+            buttonDpadRight = false;
 
 
         //Normalise values
@@ -110,7 +114,7 @@ private:
             mode = -1;
         
 
-        if (buttonA || buttonY || buttonDpadBottom){
+        if (buttonA || buttonY || buttonDpadBottom || buttonX || buttonDpadRight){
 
             if (buttonY)
                 mode = 0;
@@ -120,6 +124,15 @@ private:
                 mode = 2;
                 start = false;
             }
+            else if (buttonX && mode != 3)
+                mode = 3;
+            else if (buttonX && mode == 3)
+                mode = 0; //If we were in recording mode, pressing button x stops recording and goes back to manual mode
+            else if(buttonDpadRight && mode != 4)
+                mode = 4;
+            else if(buttonDpadRight && mode == 4)
+                mode = 0; //If we were in playing mode, pressing button left stops playing
+                // and goes back to manual mode
         }
 
         if (buttonDpadLeft && !systemCheckPrintRequest){ //Request to print the last system check report
@@ -182,7 +195,7 @@ private:
     //Joystick variables
     map<string,int> axisMap;
     map<string,int> buttonsMap;
-    bool buttonB, buttonStart, buttonA, buttonY, buttonDpadBottom, buttonDpadLeft ;
+    bool buttonB, buttonStart, buttonA, buttonY, buttonX, buttonDpadBottom, buttonDpadLeft, buttonDpadRight ;
     
     float axisRT, axisLT, axisLS_X;
 

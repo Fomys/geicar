@@ -2,6 +2,7 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <vector>
 
 #include "interfaces/msg/motors_order.hpp"
 #include "interfaces/msg/motors_feedback.hpp"
@@ -86,6 +87,15 @@ private:
             }else if (mode==2){
                 RCLCPP_INFO(this->get_logger(), "Switching to STEERING CALIBRATION Mode");
                 startSteeringCalibration();
+            }else if (mode==3){
+                speeds.clear(); //we reset the vector of recordingSpeeds
+                steering.clear();   //we reset the vector of recordingSteerings
+                RCLCPP_INFO(this->get_logger(), "Switching to Recording Mode");
+            }else if (mode==4){
+                speedsIt = speeds.begin(); //Set the iterator on the speeds vector on the beginning
+                steeringIt = steering.begin(); //Set the iterator on the steering vector on the beginning
+                finishedPlay = false;
+                RCLCPP_INFO(this->get_logger(), "Switching to Playing Mode");
             }
         }
         
@@ -126,17 +136,26 @@ private:
 
         }else{ //Car started
 
-            //Manual Mode
-            if (mode==0){
-                
-                manualPropulsionCmd(requestedThrottle, reverse, leftRearPwmCmd,rightRearPwmCmd);
+            //Manual Mode or recording Mode
+            if (mode==0 || mode == 3){
+                manualPropulsionCmd(requestedThrottle, reverse, leftRearPwmCmd, rightRearPwmCmd);
+                steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
+                if(mode == 3)
+                {
+                    speeds.push_back(requestedThrottle);
+                    steering.push_back(requestedSteerAngle);
+                }
+            //Playing Mode
+            } else if (mode == 4 && !finishedPlay){
 
-                steeringCmd(requestedSteerAngle,currentAngle, steeringPwmCmd);
+                manualPropulsionCmd(*speedsIt, reverse, leftRearPwmCmd,rightRearPwmCmd);
+                steeringCmd(*steeringIt,currentAngle, steeringPwmCmd);
 
+                speedsIt++;
+                steeringIt++;
 
-            //Autonomous Mode
-            } else if (mode==1){
-                //...
+                if(speedsIt == speeds.end())
+                    finishedPlay = true;
             }
         }
 
@@ -211,6 +230,14 @@ private:
     bool start;
     int mode;    //0 : Manual    1 : Auto    2 : Calibration
 
+    //for saving movements
+    bool requestedRecord;
+    bool requestedPlay;
+    bool finishedPlay;
+    vector<float>::iterator speedsIt;
+    vector<float>::iterator steeringIt;
+    vector<float> speeds;
+    vector<float> steering;
     
     //Motors feedback variables
     float currentAngle;
