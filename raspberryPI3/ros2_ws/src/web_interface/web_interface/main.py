@@ -1,4 +1,12 @@
+import sys
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 import datetime
+import sys
 
 import rclpy
 import signal
@@ -8,7 +16,7 @@ from flask_socketio import emit, SocketIO
 from rclpy.node import Node
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder
 import threading
 
 
@@ -28,10 +36,13 @@ class WebInterfaceNode(Node):
         self.rosout_subscription = self.create_subscription(Log, '/rosout', self.on_log, 10)
         self.stop_car_subscription = self.create_subscription(StopCar, '/stop_car', self.on_stop_car, 1)
         self.speed_order_subscription = self.create_subscription(SpeedOrder, "/speed_order", self.on_speed_order, 1)
-        self.motor_feedback_subscription = self.create_subscription(MotorsFeedback, "/motors_feedback", self.on_motors_feedback, 1)
+        self.motor_feedback_subscription = self.create_subscription(MotorsFeedback, "/motors_feedback",
+                                                                    self.on_motors_feedback, 1)
         self.speed_order_input_subscription = self.create_subscription(SpeedInput, "/speed_order_input",
                                                                        self.on_speed_order_input, 1)
-        self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 1)
+        self.delivery_subscription = self.create_subscription(Package, "/detect_package", self.on_pacakge_detect, 1)
+        self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 2)
+        self.angle_order_publisher = self.create_publisher(AngleOrder, "/angle_order", 2)
 
     def on_stop_car(self, stop):
         s = {
@@ -47,6 +58,16 @@ class WebInterfaceNode(Node):
             "speed_order": {
                 "status": "good",
                 "text": str(order.speed_order)
+            }
+        }
+        self.status.update(s)
+        self.socket_io.emit("status", s)
+
+    def on_pacakge_detect(self, status):
+        s = {
+            "delivery_button": {
+                "status": "good",
+                "text": str(status.state_pack)
             }
         }
         self.status.update(s)
@@ -88,25 +109,31 @@ class WebInterfaceNode(Node):
         self.status.update(s)
         self.socket_io.emit("status", s)
 
-    def publish_speed(self, speed):
+    def publish_speed(self, speed, angle):
         msg = SpeedInput()
         try:
             msg.speed_order_input = float(speed)
         except ValueError:
             msg.speed_order_input = 0
         self.speed_order_publisher.publish(msg)
+        msg = AngleOrder()
+        try:
+            msg.angle_order = float(angle)
+        except ValueError:
+            msg.angle_order = 0
+        self.angle_order_publisher.publish(msg)
 
     def on_log(self, log):
         if log.level == 10:
-            level = "debug"
+            level = "light"
         elif log.level == 20:
-            level = "info"
+            level = "success"
         elif log.level == 30:
-            level = "warn"
+            level = "warning"
         elif log.level == 40:
-            level = "error"
+            level = "danger"
         elif log.level == 50:
-            level = "fatal"
+            level = "danger"
         self.logs.append({
             "stamp": datetime.datetime.fromtimestamp(log.stamp.sec),
             "level": level,
@@ -142,13 +169,23 @@ def status():
     return render_template("status.html", status=web_interface_node.status)
 
 
-@app.route('/set_speed', methods=["GET", "POST"])
-def set_speed():
+@app.route('/order', methods=["GET", "POST"])
+def order():
     if request.method == 'POST':
         speed = request.form.get('speed')
-        web_interface_node.publish_speed(speed)
+        angle = request.form.get('angle')
+        web_interface_node.publish_speed(speed, angle)
     return render_template("speed.html", status=web_interface_node.status)
 
 
+@app.route('/lift', methods=["GET", "POST"])
+def lift():
+    if request.method == 'POST':
+        if "enter" in request.form.keys():
+            eprint("publish enter")
+        elif "exit" in request.form.keys():
+            eprint("publish exit")
+    return render_template("lift.html")
+
 web_interface_node.start_in_background()
-app.run(port=5000, host="0.0.0.0")
+app.run(port=5000, host="192.168.1.1")

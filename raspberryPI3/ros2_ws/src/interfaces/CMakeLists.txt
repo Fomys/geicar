@@ -25,11 +25,13 @@ set(msg_files
   "msg/SteeringCalibration.msg"
   "msg/Ultrasonic.msg"
   "msg/Gnss.msg"
-  "msg/SystemCheck.msg")
+  "msg/SystemCheck.msg"
+  "msg/Package.msg")
 
 rosidl_generate_interfaces(${PROJECT_NAME}
         ${msg_files}
-        )
+        "srv/ButtonPressed.srv"
+)
 
 ament_export_dependencies(rosidl_default_runtime)
 
