@@ -161,6 +161,7 @@ private:
                 steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
                 if(mode == 3)
                 {
+                    RCLCPP_INFO(this->get_logger(), "Recording");
                     //if(speeds.size() < 5000)
                     if(speedsIt < 10000)
                     {
@@ -170,6 +171,10 @@ private:
                         steering[steeringIt] = requestedSteerAngle;
                         speedsSize++;
                         steeringSize++;
+                    }
+                    else
+                    {
+                        RCLCPP_INFO(this->get_logger(), "Stop recording");
                     }
                 }
             //Playing Mode
