@@ -124,15 +124,10 @@ private:
                 mode = 2;
                 start = false;
             }
-            else if (buttonX && mode != 3)
+            else if (buttonX)
                 mode = 3;
-            else if (buttonX && mode == 3)
-                mode = 0; //If we were in recording mode, pressing button x stops recording and goes back to manual mode
-            else if(buttonDpadRight && mode != 4)
+            else if(buttonDpadRight)
                 mode = 4;
-            else if(buttonDpadRight && mode == 4)
-                mode = 0; //If we were in playing mode, pressing button left stops playing
-                // and goes back to manual mode
         }
 
         if (buttonDpadLeft && !systemCheckPrintRequest){ //Request to print the last system check report

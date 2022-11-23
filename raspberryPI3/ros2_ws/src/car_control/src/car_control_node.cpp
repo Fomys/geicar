@@ -161,10 +161,11 @@ private:
                 steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
                 if(mode == 3)
                 {
-                    RCLCPP_INFO(this->get_logger(), "Recording");
+
                     //if(speeds.size() < 5000)
                     if(speedsIt < 10000)
                     {
+                        RCLCPP_INFO(this->get_logger(), "Recording");
                         //speeds.push_back(requestedThrottle);
                         //steering.push_back(requestedSteerAngle);
                         speeds[speedsIt] = requestedThrottle;
