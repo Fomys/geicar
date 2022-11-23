@@ -34,9 +34,7 @@ class DetectPackage(Node):
         lgpio.gpio_claim_input(button, self.GPIO_PIN, lFlags=lgpio.SET_BIAS_PULL_DOWN)
 
         # Add callbac for rising edge (0 to 1)
-        #c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
-
-        self.get_logger().info("Config done")
+        c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
 
         #wait for response of the client
         #TODO : Add manual tiemeout when no answer from the client in 10 minutes
