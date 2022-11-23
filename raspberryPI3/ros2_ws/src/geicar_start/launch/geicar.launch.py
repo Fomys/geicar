@@ -58,8 +58,18 @@ def generate_launch_description():
         executable="web_interface",
         emulate_tty=True
     )
+    joystick = Node(
+        package="joystick_to_cmd",
+        executable="joystick_to_cmd_node",
+        emulate_tty=True
+    )
+    car_control = Node(
+        package="car_control",
+        executable="car_control_node",
+        emulate_tty=True
+    )
 
-    ld.add_action(secu)
+ld.add_action(secu)
     ld.add_action(obstacle_detection)
     ld.add_action(can_rx_node)
     ld.add_action(can_tx_node)
@@ -67,5 +77,7 @@ def generate_launch_description():
     ld.add_action(system_check_node)
     ld.add_action(asservissement)
     ld.add_action(web_server)
+    ld.add_action(joystick)
+    ld.add_action(car_control)
 
     return ld
