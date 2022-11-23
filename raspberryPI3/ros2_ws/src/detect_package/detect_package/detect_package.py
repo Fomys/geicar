@@ -6,9 +6,13 @@ import lgpio
 import numpy as np
 class DetectPackage(Node):
 
+    #Class constants
+    GPIO_HANDLE = 0
+    GPIO_PIN = 6
+
     #Class varaibles
     PackageIn = False #to remove after probably
-    time = 0
+    timer = 0
     done = False
 
     def __init__(self):
@@ -24,15 +28,19 @@ class DetectPackage(Node):
         self.PackageIn = request.state_package
 
         # Set up the pin 6 en pull down
-        button = lgpio.gpiochip_open(0)
-        lgpio.gpio_claim_alert(button, 6, lgpio.FALLING_EDGE, lFlags=lgpio.SET_BIAS_PULL_DOWN)
+        button = lgpio.gpiochip_open(self.GPIO_HANDLE)
+
+        #lgpio.gpio_claim_alert(button, 6, lgpio.FALLING_EDGE, lFlags=lgpio.SET_BIAS_PULL_DOWN)
+        lgpio.gpio_claim_input(button, self.GPIO_PIN, lFlags=lgpio.SET_BIAS_PULL_DOWN)
 
         # Add callbac for rising edge (0 to 1)
-        c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
+        #c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
+
+        self.get_logger().info("Config done")
 
         #wait for response of the client
         #TODO : Add manual tiemeout when no answer from the client in 10 minutes
-        while not self.done:
+        while lgpio.gpio_read(button, self.GPIO_PIN) == 0:
             pass
 
         response = self.PackageIn
@@ -41,10 +49,11 @@ class DetectPackage(Node):
 
     #Callback function for the GPIO interrupt
     def button_callback(self, a, b, c, timestamp):
-        if np.abs(timestamp - self.time) > 1000000000:
+        if np.abs(timestamp - self.timer) > 1000000000:
             self.PackageIn = not self.PackageIn
             self.get_logger().info("State Package ", self.PackageIn)
             self.done = True
+            self.timer = timestamp
 
 
 def main():
