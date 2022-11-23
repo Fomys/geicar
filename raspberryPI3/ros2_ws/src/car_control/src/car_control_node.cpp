@@ -163,9 +163,9 @@ private:
                 {
 
                     //if(speeds.size() < 5000)
-                    if(speedsIt < 10000)
+                    if(speedsIt < 2000)
                     {
-                        RCLCPP_INFO(this->get_logger(), "Recording");
+                        //RCLCPP_INFO(this->get_logger(), "Recording");
                         //speeds.push_back(requestedThrottle);
                         //steering.push_back(requestedSteerAngle);
                         speeds[speedsIt] = requestedThrottle;
@@ -279,8 +279,8 @@ private:
     int steeringIt;
     int speedsSize;
     int steeringSize;
-    float speeds [10000];
-    float steering [10000];
+    float speeds [2000];
+    float steering [2000];
     ofstream fichier;
     //Motors feedback variables
     float currentAngle;
