@@ -142,8 +142,11 @@ private:
                 steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
                 if(mode == 3)
                 {
-                    speeds.push_back(requestedThrottle);
-                    steering.push_back(requestedSteerAngle);
+                    if(speeds.size() < 5000)
+                    {
+                        speeds.push_back(requestedThrottle);
+                        steering.push_back(requestedSteerAngle);
+                    }
                 }
             //Playing Mode
             } else if (mode == 4 && !finishedPlay){
