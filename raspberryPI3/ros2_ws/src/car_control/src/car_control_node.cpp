@@ -2,7 +2,10 @@
 #include <chrono>
 #include <functional>
 #include <memory>
-#include <vector>
+//#include <vector>
+#include <fstream>
+#include <string>
+#include <iostream>
 
 #include "interfaces/msg/motors_order.hpp"
 #include "interfaces/msg/motors_feedback.hpp"
@@ -23,13 +26,16 @@ class car_control : public rclcpp::Node {
 
 public:
     car_control()
-    : Node("car_control_node")
+    : Node("car_control_node"), fichier("values.txt")
     {
         start = false;
         mode = 0;
         requestedThrottle = 0;
         requestedSteerAngle = 0;
-    
+        speedsIt = 0;
+        steeringIt = 0;
+        speedsSize = 0;
+        steeringSize = 0;
 
         publisher_can_= this->create_publisher<interfaces::msg::MotorsOrder>("motors_order", 10);
 
@@ -88,12 +94,25 @@ private:
                 RCLCPP_INFO(this->get_logger(), "Switching to STEERING CALIBRATION Mode");
                 startSteeringCalibration();
             }else if (mode==3){
-                speeds.clear(); //we reset the vector of recordingSpeeds
-                steering.clear();   //we reset the vector of recordingSteerings
+                //speeds.clear(); //we reset the vector of recordingSpeeds
+                //steering.clear();   //we reset the vector of recordingSteerings
+                speedsSize = 0;
+                steeringSize = 0;
+
                 RCLCPP_INFO(this->get_logger(), "Switching to Recording Mode");
             }else if (mode==4){
-                speedsIt = speeds.begin(); //Set the iterator on the speeds vector on the beginning
-                steeringIt = steering.begin(); //Set the iterator on the steering vector on the beginning
+                if(fichier.is_open())
+                {
+                    for(int i = 0; i < speedsSize; i++)
+                    {
+                        fichier << speeds[i] << " " << steering[i] << endl;
+                    }
+                    fichier.close();
+                }
+                //speedsIt = speeds.begin(); //Set the iterator on the speeds vector on the beginning
+                //steeringIt = steering.begin(); //Set the iterator on the steering vector on the beginning
+                speedsIt = 0;
+                speedsIt = 0;
                 finishedPlay = false;
                 RCLCPP_INFO(this->get_logger(), "Switching to Playing Mode");
             }
@@ -142,22 +161,31 @@ private:
                 steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
                 if(mode == 3)
                 {
-                    if(speeds.size() < 5000)
+                    //if(speeds.size() < 5000)
+                    if(speedsIt < 10000)
                     {
-                        speeds.push_back(requestedThrottle);
-                        steering.push_back(requestedSteerAngle);
+                        //speeds.push_back(requestedThrottle);
+                        //steering.push_back(requestedSteerAngle);
+                        speeds[speedsIt] = requestedThrottle;
+                        steering[steeringIt] = requestedSteerAngle;
+                        speedsSize++;
+                        steeringSize++;
                     }
                 }
             //Playing Mode
             } else if (mode == 4 && !finishedPlay){
 
-                manualPropulsionCmd(*speedsIt, reverse, leftRearPwmCmd,rightRearPwmCmd);
-                steeringCmd(*steeringIt,currentAngle, steeringPwmCmd);
-
+                //manualPropulsionCmd(*speedsIt, reverse, leftRearPwmCmd,rightRearPwmCmd);
+                //steeringCmd(*steeringIt,currentAngle, steeringPwmCmd);
+                manualPropulsionCmd(speeds[speedsIt], reverse, leftRearPwmCmd,rightRearPwmCmd);
+                steeringCmd(steering[steeringIt],currentAngle, steeringPwmCmd);
                 speedsIt++;
                 steeringIt++;
 
-                if(speedsIt == speeds.end())
+                /*if(speedsIt == speeds.end())
+                    finishedPlay = true;
+                */
+                if(speedsIt == speedsSize)
                     finishedPlay = true;
             }
         }
@@ -237,11 +265,17 @@ private:
     bool requestedRecord;
     bool requestedPlay;
     bool finishedPlay;
-    vector<float>::iterator speedsIt;
-    vector<float>::iterator steeringIt;
-    vector<float> speeds;
-    vector<float> steering;
-    
+    //vector<float>::iterator speedsIt;
+    //vector<float>::iterator steeringIt;
+    //vector<float> speeds;
+    //vector<float> steering;
+    int speedsIt;
+    int steeringIt;
+    int speedsSize;
+    int steeringSize;
+    float speeds [10000];
+    float steering [10000];
+    ofstream fichier;
     //Motors feedback variables
     float currentAngle;
 
