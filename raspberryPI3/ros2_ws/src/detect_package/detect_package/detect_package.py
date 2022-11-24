@@ -41,7 +41,7 @@ class DetectPackage(Node):
         while lgpio.gpio_read(button, self.GPIO_PIN) == 0:
             pass
 
-        response = self.PackageIn
+        response.package_update = self.PackageIn
         self.get_logger().info("Action done")
         return response
 
