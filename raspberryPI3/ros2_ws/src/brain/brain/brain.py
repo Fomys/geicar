@@ -28,7 +28,7 @@ def main():
 
     brain = Brain()
     response = brain.send_request()
-    brain.get_logger().info('State Package', response.package_update)
+    brain.get_logger().info('State Package {0}'.format(response.package_update))
 
     brain.destroy_node()
     rclpy.shutdown()
