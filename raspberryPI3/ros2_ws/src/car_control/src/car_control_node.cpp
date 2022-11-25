@@ -117,7 +117,7 @@ private:
             }
         }
         
-        if (mode == 0 && start){  //if manual mode -> update requestedThrottle, requestedSteerAngle and reverse from joystick order
+        if ((mode == 0 || mode == 3) && start){  //if manual mode -> update requestedThrottle, requestedSteerAngle and reverse from joystick order
             requestedThrottle = joyOrder.throttle;
             requestedSteerAngle = joyOrder.steer;
             reverse = joyOrder.reverse;
@@ -169,6 +169,10 @@ private:
                         //steering.push_back(requestedSteerAngle);
                         //speeds[size] = requestedThrottle;
                         //steering[size] = requestedSteerAngle;
+                        if(!affiche){
+                            affiche = true;
+                            RCLCPP_INFO(this->get_logger(), "enter recording");
+                        }
                         size++;
                     }
                     else
