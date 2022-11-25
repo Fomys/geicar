@@ -158,7 +158,7 @@ private:
             if (mode==0 || mode == 3){
                 manualPropulsionCmd(requestedThrottle, reverse, leftRearPwmCmd, rightRearPwmCmd);
                 steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
-                /*if(mode == 3)
+                if(mode == 3)
                 {
 
                     //if(speeds.size() < 5000)
@@ -179,7 +179,7 @@ private:
                         }
 
                     }
-                }*/
+                }
             //Playing Mode
             } else if (mode == 4 && !finishedPlay){
 
