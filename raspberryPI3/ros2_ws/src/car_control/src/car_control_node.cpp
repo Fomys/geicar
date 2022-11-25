@@ -167,12 +167,8 @@ private:
                         //RCLCPP_INFO(this->get_logger(), "Recording");
                         //speeds.push_back(requestedThrottle);
                         //steering.push_back(requestedSteerAngle);
-                        //speeds[size] = requestedThrottle;
-                        //steering[size] = requestedSteerAngle;
-                        if(!affiche){
-                            affiche = true;
-                            RCLCPP_INFO(this->get_logger(), "enter recording");
-                        }
+                        speeds[size] = requestedThrottle;
+                        steering[size] = requestedSteerAngle;
                         size++;
                     }
                     else
