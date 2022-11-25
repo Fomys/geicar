@@ -35,6 +35,7 @@ public:
         speedsIt = 0;
         steeringIt = 0;
         size = 0;
+        affiche = false;
 
         publisher_can_= this->create_publisher<interfaces::msg::MotorsOrder>("motors_order", 10);
 
@@ -157,7 +158,7 @@ private:
             if (mode==0 || mode == 3){
                 manualPropulsionCmd(requestedThrottle, reverse, leftRearPwmCmd, rightRearPwmCmd);
                 steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
-                if(mode == 3)
+                /*if(mode == 3)
                 {
 
                     //if(speeds.size() < 5000)
@@ -166,15 +167,19 @@ private:
                         //RCLCPP_INFO(this->get_logger(), "Recording");
                         //speeds.push_back(requestedThrottle);
                         //steering.push_back(requestedSteerAngle);
-                        speeds[size] = requestedThrottle;
-                        steering[size] = requestedSteerAngle;
+                        //speeds[size] = requestedThrottle;
+                        //steering[size] = requestedSteerAngle;
                         size++;
                     }
                     else
                     {
-                        RCLCPP_INFO(this->get_logger(), "Stop recording");
+                        if(!affiche){
+                            affiche = true;
+                            RCLCPP_INFO(this->get_logger(), "Stop recording");
+                        }
+
                     }
-                }
+                }*/
             //Playing Mode
             } else if (mode == 4 && !finishedPlay){
 
@@ -263,7 +268,7 @@ private:
     //General variables
     bool start;
     int mode;    //0 : Manual    1 : Auto    2 : Calibration
-
+    bool affiche;
     //for saving movements
     bool requestedRecord;
     bool requestedPlay;
