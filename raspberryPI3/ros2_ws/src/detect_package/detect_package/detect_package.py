@@ -24,7 +24,7 @@ class DetectPackage(Node):
 
     def check_button(self, request, response):
         self.get_logger().info('Incoming request')
-        self.done = False
+        #self.done = False
         self.PackageIn = request.state_package
 
         # Set up the pin 6 en pull down
@@ -33,25 +33,25 @@ class DetectPackage(Node):
         #lgpio.gpio_claim_alert(button, 6, lgpio.FALLING_EDGE, lFlags=lgpio.SET_BIAS_PULL_DOWN)
         lgpio.gpio_claim_input(button, self.GPIO_PIN, lFlags=lgpio.SET_BIAS_PULL_DOWN)
 
-        # Add callbac for rising edge (0 to 1)
-        c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
+        # Add callback for rising edge (0 to 1)
+        #c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
 
         #wait for response of the client
         #TODO : Add manual tiemeout when no answer from the client in 10 minutes
         while lgpio.gpio_read(button, self.GPIO_PIN) == 0:
             pass
 
-        response.package_update = self.PackageIn
+        response.package_update = not self.PackageIn
         self.get_logger().info("Action done")
         return response
 
     #Callback function for the GPIO interrupt
-    def button_callback(self, a, b, c, timestamp):
-        if np.abs(timestamp - self.timer) > 1000000000:
-            self.PackageIn = not self.PackageIn
-            self.get_logger().info("State Package ", self.PackageIn)
-            self.done = True
-            self.timer = timestamp
+    # def button_callback(self, a, b, c, timestamp):
+    #     if np.abs(timestamp - self.timer) > 1000000000:
+    #         self.PackageIn = not self.PackageIn
+    #         self.get_logger().info("State Package ", self.PackageIn)
+    #         self.done = True
+    #         self.timer = timestamp
 
 
 def main():
