@@ -2,8 +2,9 @@
 #include <chrono>
 #include <functional>
 #include <memory>
-//#include <vector>
+#include <vector>
 #include <fstream>
+#include <sstream>
 #include <string>
 #include <iostream>
 
@@ -26,7 +27,7 @@ class car_control : public rclcpp::Node {
 
 public:
     car_control()
-    : Node("car_control_node"), fichier("values.txt")
+    : Node("car_control_node"), fichier("values.txt"), fichier_enregistrement("values.txt")
     {
         start = false;
         mode = 0;
@@ -189,17 +190,41 @@ private:
 
                 //manualPropulsionCmd(*speedsIt, reverse, leftRearPwmCmd,rightRearPwmCmd);
                 //steeringCmd(*steeringIt,currentAngle, steeringPwmCmd);
-                manualPropulsionCmd(speeds[speedsIt], reverses[reversesIt], leftRearPwmCmd,rightRearPwmCmd);
-                steeringCmd(steering[steeringIt],currentAngle, steeringPwmCmd);
-                speedsIt++;
-                steeringIt++;
-                reversesIt++;
 
+                //manualPropulsionCmd(speeds[speedsIt], reverses[reversesIt], leftRearPwmCmd,rightRearPwmCmd);
+                //steeringCmd(steering[steeringIt],currentAngle, steeringPwmCmd);
+                //speedsIt++;
+                //steeringIt++;
+                //reversesIt++;
+
+                if(fichier_enregistrement)
+                {
+                    string line;
+                    if(getline(fichier_enregistrement, line))
+                    {
+                        //On lit une ligne complète
+                        istringstream iss (line);
+                        vector<string> results ((istream_iterator<string>(iss)), istream_iterator<string>());
+                        manualPropulsionCmd(stof(results[0]), stof(results[2]), leftRearPwmCmd,rightRearPwmCmd);
+                        steeringCmd(stof(results[1]), currentAngle, steeringPwmCmd);
+                    }
+                    else
+                    {
+                        finishedPlay = true;
+                        RCLCPP_INFO(this->get_logger(), "Fin lecture");
+                    }
+
+                }
+                else
+                {
+                    RCLCPP_INFO(this->get_logger(), "ERREUR: Impossible d'ouvrir le fichier en lecture.");
+                }
                 /*if(speedsIt == speeds.end())
                     finishedPlay = true;
                 */
-                if(speedsIt == size)
+                /*if(speedsIt == size)
                     finishedPlay = true;
+                */
             }
         }
 
@@ -285,11 +310,18 @@ private:
     int speedsIt;
     int steeringIt;
     int reversesIt;
+
+
+
+
+
     int size;
     float speeds [5000];
     float steering [5000];
     float reverses [5000];
     ofstream fichier;
+    ifstream fichier_enregistrement;
+
     //Motors feedback variables
     float currentAngle;
 
