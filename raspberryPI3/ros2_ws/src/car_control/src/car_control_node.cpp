@@ -34,6 +34,7 @@ public:
         requestedSteerAngle = 0;
         speedsIt = 0;
         steeringIt = 0;
+        reversesIt = 0;
         size = 0;
         affiche = false;
 
@@ -104,14 +105,16 @@ private:
                 {
                     for(int i = 0; i < size; i++)
                     {
-                        fichier << speeds[i] << " " << steering[i] << endl;
+                        fichier << speeds[i] << " " << steering[i] << " " << reverses[i] << endl;
                     }
                     fichier.close();
                 }
                 //speedsIt = speeds.begin(); //Set the iterator on the speeds vector on the beginning
                 //steeringIt = steering.begin(); //Set the iterator on the steering vector on the beginning
                 speedsIt = 0;
-                speedsIt = 0;
+                steeringIt = 0;
+                reversesIt = 0;
+
                 finishedPlay = false;
                 RCLCPP_INFO(this->get_logger(), "Switching to Playing Mode");
             }
@@ -162,13 +165,14 @@ private:
                 {
 
                     //if(speeds.size() < 5000)
-                    if(size < 2000)
+                    if(size < 5000)
                     {
                         //RCLCPP_INFO(this->get_logger(), "Recording");
                         //speeds.push_back(requestedThrottle);
                         //steering.push_back(requestedSteerAngle);
                         speeds[size] = requestedThrottle;
                         steering[size] = requestedSteerAngle;
+                        reverses[size] = reverse;
                         size++;
                     }
                     else
@@ -185,10 +189,11 @@ private:
 
                 //manualPropulsionCmd(*speedsIt, reverse, leftRearPwmCmd,rightRearPwmCmd);
                 //steeringCmd(*steeringIt,currentAngle, steeringPwmCmd);
-                manualPropulsionCmd(speeds[speedsIt], reverse, leftRearPwmCmd,rightRearPwmCmd);
+                manualPropulsionCmd(speeds[speedsIt], reverses[reversesIt], leftRearPwmCmd,rightRearPwmCmd);
                 steeringCmd(steering[steeringIt],currentAngle, steeringPwmCmd);
                 speedsIt++;
                 steeringIt++;
+                reversesIt++;
 
                 /*if(speedsIt == speeds.end())
                     finishedPlay = true;
@@ -279,9 +284,11 @@ private:
     //vector<float> steering;
     int speedsIt;
     int steeringIt;
+    int reversesIt;
     int size;
-    float speeds [2000];
-    float steering [2000];
+    float speeds [5000];
+    float steering [5000];
+    float reverses [5000];
     ofstream fichier;
     //Motors feedback variables
     float currentAngle;
