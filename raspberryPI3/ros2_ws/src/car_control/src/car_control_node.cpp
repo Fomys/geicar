@@ -34,8 +34,7 @@ public:
         requestedSteerAngle = 0;
         speedsIt = 0;
         steeringIt = 0;
-        speedsSize = 0;
-        steeringSize = 0;
+        size = 0;
 
         publisher_can_= this->create_publisher<interfaces::msg::MotorsOrder>("motors_order", 10);
 
@@ -96,14 +95,13 @@ private:
             }else if (mode==3){
                 //speeds.clear(); //we reset the vector of recordingSpeeds
                 //steering.clear();   //we reset the vector of recordingSteerings
-                speedsSize = 0;
-                steeringSize = 0;
+                size = 0;
 
                 RCLCPP_INFO(this->get_logger(), "Switching to Recording Mode");
             }else if (mode==4){
                 if(fichier.is_open())
                 {
-                    for(int i = 0; i < speedsSize; i++)
+                    for(int i = 0; i < size; i++)
                     {
                         fichier << speeds[i] << " " << steering[i] << endl;
                     }
@@ -163,15 +161,14 @@ private:
                 {
 
                     //if(speeds.size() < 5000)
-                    if(speedsIt < 2000)
+                    if(size < 2000)
                     {
                         //RCLCPP_INFO(this->get_logger(), "Recording");
                         //speeds.push_back(requestedThrottle);
                         //steering.push_back(requestedSteerAngle);
-                        speeds[speedsIt] = requestedThrottle;
-                        steering[steeringIt] = requestedSteerAngle;
-                        speedsSize++;
-                        steeringSize++;
+                        speeds[size] = requestedThrottle;
+                        steering[size] = requestedSteerAngle;
+                        size++;
                     }
                     else
                     {
@@ -191,7 +188,7 @@ private:
                 /*if(speedsIt == speeds.end())
                     finishedPlay = true;
                 */
-                if(speedsIt == speedsSize)
+                if(speedsIt == size)
                     finishedPlay = true;
             }
         }
@@ -277,8 +274,7 @@ private:
     //vector<float> steering;
     int speedsIt;
     int steeringIt;
-    int speedsSize;
-    int steeringSize;
+    int size;
     float speeds [2000];
     float steering [2000];
     ofstream fichier;
