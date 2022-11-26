@@ -258,7 +258,11 @@ private:
 
             leftPwmCmd += 50;
             rightPwmCmd += 50;
+
+            RCLCPP_INFO(this->get_logger(), "Valeur PWM : %f", leftPwmCmd);
         }
+
+
 
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
