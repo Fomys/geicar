@@ -244,20 +244,20 @@ private:
             leftPwmCmd += 50;
             rightPwmCmd += 50;
         }
-        else if (requestedSpeed < -0.1)
+        else if (requestedSpeed < 0)
         {
-            if (leftPwmCmd < 0)
+            if (leftPwmCmd > 0)
                 leftPwmCmd = 0;
-            else if (leftPwmCmd > 50)
-                leftPwmCmd = 50;
+            else if (leftPwmCmd < -50)
+                leftPwmCmd = -50;
 
-            if (rightPwmCmd < 0)
+            if (rightPwmCmd > 0)
                 rightPwmCmd = 0;
-            else if (rightPwmCmd > 50)
-                rightPwmCmd = 50;
+            else if (rightPwmCmd < -50)
+                rightPwmCmd = -50;
 
-            leftPwmCmd += 0;
-            rightPwmCmd += 0;
+            leftPwmCmd += 50;
+            rightPwmCmd += 50;
         }
 
         leftRearPwmCmd = leftPwmCmd;
