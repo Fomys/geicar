@@ -226,8 +226,6 @@ private:
         leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
         rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
 
-        //In order to avoid breaking the motor,
-        // we prevent the motors to spin backwards (The command must be greater than 50.)
         if ( requestedSpeed >= 0)
         {
             if (leftPwmCmd < 0)
@@ -260,7 +258,6 @@ private:
             leftPwmCmd += 50;
             rightPwmCmd += 50;
         }
-
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
     }
