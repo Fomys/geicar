@@ -91,10 +91,10 @@ private:
     //For PID Calculations
     float sumIntegralLeft;
     float sumIntegralRight;
-    //float sumIntegralSteerAngle;       // New for Steering
+
     float previousSpeedErrorLeft;
     float previousSpeedErrorRight;
-    //float previousSteerAngle;       // New for Steering
+
 
     //**Control variables**
     uint8_t leftRearPwmCmd;
@@ -255,7 +255,8 @@ private:
                 rightPwmCmd = 0;
             else if (rightPwmCmd < -50)
                 rightPwmCmd = -50;
-
+            //Set the offset, because cmd = [0 : 50] goes backwards
+            // And cmd = [50 : 100] goes forwards
             leftPwmCmd += 50;
             rightPwmCmd += 50;
         }
@@ -266,23 +267,8 @@ private:
 
     void asservSteering ()
     {
-
-        //float steerPwmCmd;
-        //float deltaErrorSteer;
-
-        //Computation of the error for Kp_s
+       //Computation of the error for Kp
         float errorAngle = currentAngle - requestedSteerAngle;
-
-        //Computation of the error for Ki_s
-        //sumIntegralSteerAngle += errorAngle;
-
-        //Computation of the error for Kd_s
-        //deltaErrorSteer = errorAngle - previousSteerAngle;
-
-        //Computation of the command for the steering angle
-        //steerPwmCmd = errorAngle * Kp_s + sumIntegralSteerAngle * Ki_s + deltaErrorSteer * Kd_s;
-
-        //steeringPwmCmd = steerPwmCmd;
 
         //Command's calculation
         if (abs(errorAngle)<TOLERANCE_ANGLE){
