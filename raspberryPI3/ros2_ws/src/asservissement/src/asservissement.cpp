@@ -247,14 +247,14 @@ private:
         else if (requestedSpeed < -0.1)
         {
             if (leftPwmCmd < 0)
-                leftPwmCmd = -50;
-            else if (leftPwmCmd > 0)
                 leftPwmCmd = 0;
+            else if (leftPwmCmd > 50)
+                leftPwmCmd = 50;
 
             if (rightPwmCmd < 0)
-                rightPwmCmd = -50;
-            else if (rightPwmCmd > 0)
                 rightPwmCmd = 0;
+            else if (rightPwmCmd > 50)
+                rightPwmCmd = 50;
 
             leftPwmCmd += 0;
             rightPwmCmd += 0;
