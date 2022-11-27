@@ -51,6 +51,14 @@ public:
         subscription_speed_order_ = this->create_subscription<interfaces::msg::SpeedOrder>(
                 "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeed, this, _1));
 
+        //Replay mode
+        // To be aware of the current mode (in replay mode or in autonomous mode)
+        /*subscription_scenarioToPlay_ = this->create_subscription<interfaces::msg::ScenarioToPlay>(
+                "scenarioToPlay", 10, std::bind(&asservissement::scenarioToPlayCallback, this, _1));
+
+        subscription_MotorsOrdersReplayMode_ = this->create_subscription<interfaces::msg::MotorsOrdersReplayMode>(
+                "MotorsOrdersReplayMode", 10, std::bind(&asservissement::MotorsOrdersReplayModeCallback, this, _1));
+        */
         //Timer for update of parameters
         timer_parameter_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
         timer_cmd_ = this->create_wall_timer(PERIOD_UPDATE_CMD, std::bind(&asservissement::executeCmd, this));
@@ -72,16 +80,27 @@ private:
     rclcpp::Subscription<interfaces::msg::MotorsFeedback>::SharedPtr subscription_motors_feedback_;
     rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_angle_order_;
     rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
+    //rclcpp::Subscription<interfaces::msg::ScenarioToPlay>::SharedPtr subscription_scenarioToPlay_;
+    //rclcpp::Subscription<interfaces::msg::MotorsOrdersReplayMode>::SharedPtr subscription_MotorsOrdersReplayMode_
 
     //Timer
     rclcpp::TimerBase::SharedPtr timer_parameter_;
     rclcpp::TimerBase::SharedPtr timer_cmd_;
 
 
+
     //**VARIABLES FOR CONTROL**
+    //Mode
+    bool modeScenarioActivated = false;
+
     //Requested commands by brain
     float requestedSteerAngle = 0;
     float requestedSpeed = 0;
+
+    //Requested commands by replay mode (=RM)
+    /*float requestedThrottleRM = 0;
+    bool reverseRM = false;
+    float requestedSteerAngleRM = 0;*/
 
     //Data from motor feedback
     float currentAngle ;
@@ -150,6 +169,24 @@ private:
     }
 
     /*
+     * Callback function when scenarioToPlay topic is updated
+     */
+    /*void scenarioToPlayCallback (const interfaces::msg::ScenarioToPlay & scenarioToPlay)
+    {
+        modeScenarioActivated = scenarioToPlay.activated;
+    }*/
+
+    /*
+     * Callback function when MotorsOrdersReplayMode topic is updated
+     */
+    /*void MotorsOrdersReplayModeCallback (const interfaces::msg::MotorsOrdersReplayMode & motorsOrdersReplayMode)
+    {
+        requestedThrottleRM = motorsOrdersReplayMode.throttle;
+        reverseRM = motorsOrdersReplayMode.reverse;
+        requestedSteerAngleRM = motorsOrdersReplayMode.steer;
+    }*/
+
+    /*
      * Update Parameter values every second in case of a change
      */
     void updateParameters()
@@ -184,14 +221,37 @@ private:
     void executeCmd()
     {
         auto motorsOrder = interfaces::msg::MotorsOrder();
-        //Asservissement roues
-        asservSpeed();
-        motorsOrder.left_rear_pwm = leftRearPwmCmd;
-        motorsOrder.right_rear_pwm = rightRearPwmCmd;
-        //Asservissement steering
-        asservSteering();
-        motorsOrder.steering_pwm = steeringPwmCmd;
-        publisher_can_->publish(motorsOrder);
+
+        //if(!modeScenarioActivated)
+        //{
+            //Asservissement roues
+            asservSpeed();
+            motorsOrder.left_rear_pwm = leftRearPwmCmd;
+            motorsOrder.right_rear_pwm = rightRearPwmCmd;
+            //Asservissement steering
+            asservSteering();
+            motorsOrder.steering_pwm = steeringPwmCmd;
+            publisher_can_->publish(motorsOrder);
+        //}
+        /*else //if we are in "scenario" mode
+        {
+            //If we are in replay mode, we want to use the same speed command method as the manual mode
+            if (reverseRM){
+                leftRearPwmCmd = 50 - 50*requestedThrottleRM;
+                //requestedThrottleRM : [0 ; 1] => PWM : [50 -> 0] (reverse)
+            } else{
+                leftRearPwmCmd = 50 + 50*requestedThrottleRM;
+                //requestedThrottleRM : [0 ; 1] => PWM : [50 -> 100] (forward)
+            }
+            motorsOrder.left_rear_pwm = leftRearPwmCmd;
+            motorsOrder.right_rear_pwm = leftRearPwmCmd; //Same command on both motors (like the joystick)
+
+            asservSteering(); //This asserv method is already used when we're in manual mode
+
+            motorsOrder.steering_pwm = steeringPwmCmd;
+            publisher_can_->publish(motorsOrder);
+        }*/
+
     }
 
 

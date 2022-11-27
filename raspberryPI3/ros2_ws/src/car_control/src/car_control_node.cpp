@@ -2,6 +2,11 @@
 #include <chrono>
 #include <functional>
 #include <memory>
+#include <vector>
+#include <fstream>
+#include <sstream>
+#include <string>
+#include <iostream>
 
 #include "interfaces/msg/motors_order.hpp"
 #include "interfaces/msg/motors_feedback.hpp"
@@ -22,13 +27,17 @@ class car_control : public rclcpp::Node {
 
 public:
     car_control()
-    : Node("car_control_node")
+    : Node("car_control_node"), fichier("values.txt"), fichier_enregistrement("values.txt")
     {
         start = false;
         mode = 0;
         requestedThrottle = 0;
         requestedSteerAngle = 0;
-    
+        //speedsIt = 0;
+        //steeringIt = 0;
+        //reversesIt = 0;
+        size = 0;
+        affiche = false;
 
         publisher_can_= this->create_publisher<interfaces::msg::MotorsOrder>("motors_order", 10);
 
@@ -86,10 +95,33 @@ private:
             }else if (mode==2){
                 RCLCPP_INFO(this->get_logger(), "Switching to STEERING CALIBRATION Mode");
                 startSteeringCalibration();
+            }else if (mode==3){
+                //speeds.clear(); //we reset the vector of recordingSpeeds
+                //steering.clear();   //we reset the vector of recordingSteerings
+                size = 0;
+
+                RCLCPP_INFO(this->get_logger(), "Switching to Recording Mode");
+            }else if (mode==4){
+                if(fichier.is_open())
+                {
+                    for(int i = 0; i < size; i++)
+                    {
+                        fichier << speeds[i] << " " << steering[i] << endl;
+                    }
+                    fichier.close();
+                }
+                //speedsIt = speeds.begin(); //Set the iterator on the speeds vector on the beginning
+                //steeringIt = steering.begin(); //Set the iterator on the steering vector on the beginning
+                //speedsIt = 0;
+                //steeringIt = 0;
+                //reversesIt = 0;
+
+                finishedPlay = false;
+                RCLCPP_INFO(this->get_logger(), "Switching to Playing Mode");
             }
         }
         
-        if (mode == 0 && start){  //if manual mode -> update requestedThrottle, requestedSteerAngle and reverse from joystick order
+        if ((mode == 0 || mode == 3) && start){  //if manual mode -> update requestedThrottle, requestedSteerAngle and reverse from joystick order
             requestedThrottle = joyOrder.throttle;
             requestedSteerAngle = joyOrder.steer;
             reverse = joyOrder.reverse;
@@ -103,6 +135,8 @@ private:
     */
     void motorsFeedbackCallback(const interfaces::msg::MotorsFeedback & motorsFeedback){
         currentAngle = motorsFeedback.steering_angle;
+        currentLeftRearSpeed = motorsFeedback.left_rear_speed;
+        currentRightRearSpeed = motorsFeedback.right_rear_speed;
     }
 
 
@@ -126,17 +160,78 @@ private:
 
         }else{ //Car started
 
-            //Manual Mode
-            if (mode==0){
-                
-                manualPropulsionCmd(requestedThrottle, reverse, leftRearPwmCmd,rightRearPwmCmd);
+            //Manual Mode or recording Mode
+            if (mode==0 || mode == 3){
+                manualPropulsionCmd(requestedThrottle, reverse, leftRearPwmCmd, rightRearPwmCmd);
+                steeringCmd(requestedSteerAngle, currentAngle, steeringPwmCmd);
+                if(mode == 3)
+                {
 
-                steeringCmd(requestedSteerAngle,currentAngle, steeringPwmCmd);
+                    //if(speeds.size() < 5000)
+                    if(size < 5000)
+                    {
+                        //RCLCPP_INFO(this->get_logger(), "Recording");
+                        //speeds.push_back(requestedThrottle);
+                        //steering.push_back(requestedSteerAngle);
+                        /*speeds[size] = requestedThrottle;
+                        steering[size] = requestedSteerAngle;
+                        reverses[size] = reverse;
+                        size++;*/
 
+                        //we store the average speed between both speeds
+                        speeds[size] = (currentLeftRearSpeed + currentRightRearSpeed)/2;
+                        steering[size] = currentAngle;
+                        size++;
+                    }
+                    else
+                    {
+                        if(!affiche){
+                            affiche = true;
+                            RCLCPP_INFO(this->get_logger(), "Stop recording");
+                        }
 
-            //Autonomous Mode
-            } else if (mode==1){
-                //...
+                    }
+                }
+            //Playing Mode
+            } else if (mode == 4 && !finishedPlay){
+
+                //manualPropulsionCmd(*speedsIt, reverse, leftRearPwmCmd,rightRearPwmCmd);
+                //steeringCmd(*steeringIt,currentAngle, steeringPwmCmd);
+
+                //manualPropulsionCmd(speeds[speedsIt], reverses[reversesIt], leftRearPwmCmd,rightRearPwmCmd);
+                //steeringCmd(steering[steeringIt],currentAngle, steeringPwmCmd);
+                //speedsIt++;
+                //steeringIt++;
+                //reversesIt++;
+                /*
+                if(fichier_enregistrement)
+                {
+                    string line;
+                    if(getline(fichier_enregistrement, line))
+                    {
+                        //On lit une ligne complète
+                        istringstream iss (line);
+                        vector<string> results ((istream_iterator<string>(iss)), istream_iterator<string>());
+                        manualPropulsionCmd(stof(results[0]), stof(results[2]), leftRearPwmCmd,rightRearPwmCmd);
+                        steeringCmd(stof(results[1]), currentAngle, steeringPwmCmd);
+                    }
+                    else
+                    {
+                        finishedPlay = true;
+                        RCLCPP_INFO(this->get_logger(), "Fin lecture");
+                    }
+
+                }
+                else
+                {
+                    RCLCPP_INFO(this->get_logger(), "ERREUR: Impossible d'ouvrir le fichier en lecture.");
+                }*/
+                /*if(speedsIt == speeds.end())
+                    finishedPlay = true;
+                */
+                /*if(speedsIt == size)
+                    finishedPlay = true;
+                */
             }
         }
 
@@ -210,10 +305,30 @@ private:
     //General variables
     bool start;
     int mode;    //0 : Manual    1 : Auto    2 : Calibration
+    bool affiche;
+    //for saving movements
+    bool requestedRecord;
+    bool requestedPlay;
+    bool finishedPlay;
+    //vector<float>::iterator speedsIt;
+    //vector<float>::iterator steeringIt;
+    //vector<float> speeds;
+    //vector<float> steering;
+    int speedsIt;
+    //int steeringIt;
+    //int reversesIt;
 
-    
+    int size;
+    float speeds [5000];
+    float steering [5000];
+
+    ofstream fichier;
+    ifstream fichier_enregistrement;
+
     //Motors feedback variables
     float currentAngle;
+    float currentLeftRearSpeed;
+    float currentRightRearSpeed;
 
     //Manual Mode variables (with joystick control)
     bool reverse;
