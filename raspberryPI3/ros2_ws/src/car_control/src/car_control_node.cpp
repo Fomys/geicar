@@ -27,7 +27,7 @@ class car_control : public rclcpp::Node {
 
 public:
     car_control()
-    : Node("car_control_node"), fichier("marche_avant.txt"), fichier_enregistrement("marche_avant.txt")
+    : Node("car_control_node"), fichier("enter_lift.txt"), fichier_enregistrement("enter_lift.txt")
     {
         start = false;
         mode = 0;
