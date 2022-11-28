@@ -59,8 +59,8 @@ def generate_launch_description():
         emulate_tty=True
     )
     joystick = Node(
-        package="joystick_to_cmd",
-        executable="joystick_to_cmd_node",
+        package="joystick",
+        executable="joystick_to_cmd",
         emulate_tty=True
     )
     car_control = Node(
@@ -70,7 +70,7 @@ def generate_launch_description():
     )
     replay = Node(
         package="replay",
-        executable="replay_node",
+        executable="replay",
         emulate_tty=True
     )
 
@@ -84,6 +84,6 @@ def generate_launch_description():
     ld.add_action(web_server)
     ld.add_action(joystick)
     ld.add_action(car_control)
-    ld.add_action(replay)
+    #ld.add_action(replay)
 
     return ld

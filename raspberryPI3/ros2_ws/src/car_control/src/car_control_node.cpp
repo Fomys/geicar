@@ -27,23 +27,22 @@ class car_control : public rclcpp::Node {
 
 public:
     car_control()
-    : Node("car_control_node"), fichier("values.txt"), fichier_enregistrement("values.txt")
+    : Node("car_control_node"), fichier("marche_avant.txt"), fichier_enregistrement("marche_avant.txt")
     {
         start = false;
         mode = 0;
         requestedThrottle = 0;
         requestedSteerAngle = 0;
+        size = 0;
+        affiche = false;
+
         //speedsIt = 0;
         //steeringIt = 0;
         //reversesIt = 0;
-        size = 0;
-        affiche = false;
 
         publisher_can_= this->create_publisher<interfaces::msg::MotorsOrder>("motors_order", 10);
 
         publisher_steeringCalibration_ = this->create_publisher<interfaces::msg::SteeringCalibration>("steering_calibration", 10);
-
-        
 
         subscription_joystick_order_ = this->create_subscription<interfaces::msg::JoystickOrder>(
         "joystick_order", 10, std::bind(&car_control::joystickOrderCallback, this, _1));
@@ -53,8 +52,6 @@ public:
 
         subscription_steering_calibration_ = this->create_subscription<interfaces::msg::SteeringCalibration>(
         "steering_calibration", 10, std::bind(&car_control::steeringCalibrationCallback, this, _1));
-
-
 
         server_calibration_ = this->create_service<std_srvs::srv::Empty>(
                             "steering_calibration", std::bind(&car_control::steeringCalibration, this, std::placeholders::_1, std::placeholders::_2));
@@ -99,7 +96,6 @@ private:
                 //speeds.clear(); //we reset the vector of recordingSpeeds
                 //steering.clear();   //we reset the vector of recordingSteerings
                 size = 0;
-
                 RCLCPP_INFO(this->get_logger(), "Switching to Recording Mode");
             }else if (mode==4){
                 if(fichier.is_open())
