@@ -45,10 +45,9 @@ private:
 
     //**VARIABLES FOR FILES MANAGEMENT
 
-    bool finishedPlay = false;
+    bool finishedPlay = true;
     ifstream fichier_enregistrement;
     bool problem = false;
-    bool replay_mode_activated = false;
 
 
 
@@ -60,7 +59,7 @@ private:
     void executeReplay() {
         auto angle_order = interfaces::msg::AngleOrder();
         auto speed_input = interfaces::msg::SpeedInput();
-        if (!finishedPlay && replay_mode_activated) {
+        if (!finishedPlay) {
             if (fichier_enregistrement) {
                 string line;
                 if (getline(fichier_enregistrement, line)) {
@@ -91,14 +90,12 @@ private:
          * Callback to update scenario to play
          */
         void scenarioToPlayCallback(const interfaces::msg::ScenarioToPlay &scenarioToPlay) {
-            if (scenarioToPlay.activated) {
                 finishedPlay = false;
                 problem = false;
-                replay_mode_activated = true;
                 fichier_enregistrement.open(scenarioToPlay.scenario_file, std::ifstream::in);
                 RCLCPP_INFO(this->get_logger(), "Launching the scenario");
                 //RCLCPP_INFO(this->get_logger(), "Launching of the scenario written in %s", scenarioToPlay.scenario_file);
-            }
+
         }
 
 
