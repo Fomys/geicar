@@ -55,7 +55,7 @@ private:
     /************ FUNCTION DECLARATIONS *******************/
 
     /*
-    * If replay mode, update speed and steering command by reading the scenario file
+    * If replay mode, update speed and steering command by reading the scenario file every 1ms
     */
     void executeReplay() {
         auto angle_order = interfaces::msg::AngleOrder();
@@ -94,7 +94,9 @@ private:
             if (scenarioToPlay.activated) {
                 finishedPlay = false;
                 problem = false;
+                replay_mode_activated = true;
                 fichier_enregistrement.open(scenarioToPlay.scenario_file, std::ifstream::in);
+                RCLCPP_INFO(this->get_logger(), "Launching the scenario");
                 //RCLCPP_INFO(this->get_logger(), "Launching of the scenario written in %s", scenarioToPlay.scenario_file);
             }
         }
