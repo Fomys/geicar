@@ -169,6 +169,5 @@ def lift():
             eprint("publish exit")
     return render_template("lift.html")
 
-
 web_interface_node.start_in_background()
 app.run(port=5000, host="0.0.0.0")
