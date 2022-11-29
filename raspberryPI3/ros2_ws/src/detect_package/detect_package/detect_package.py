@@ -48,10 +48,11 @@ class DetectPackage(Node):
         #TODO : Add manual tiemeout when no answer from the client in 10 minutes
         #while lgpio.gpio_read(button, self.GPIO_PIN) == 0:
         #   pass
-        self.state = lgpio.gpio_read(button, self.GPIO_PIN)
 
         if lgpio.gpio_read(button, self.GPIO_PIN and self.state == False) == 1:
             self.PackageIn = not self.PackageIn
+
+        self.state = lgpio.gpio_read(button, self.GPIO_PIN)
 
         self.publish_package.publish(self.PackageIn)
         self.get_logger().info("Action done")
