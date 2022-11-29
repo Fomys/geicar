@@ -61,8 +61,8 @@ def generate_launch_description():
 
     ld.add_action(secu)
     ld.add_action(obstacle_detection)
-    ld.add_action(can_rx_node)
-    ld.add_action(can_tx_node)
+#    ld.add_action(can_rx_node)
+#    ld.add_action(can_tx_node)
     ld.add_action(imu_filter_madgwick_node)
     ld.add_action(system_check_node)
     ld.add_action(asservissement)

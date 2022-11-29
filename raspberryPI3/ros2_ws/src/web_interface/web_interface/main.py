@@ -1,4 +1,12 @@
+import sys
+
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 import datetime
+import sys
 
 import rclpy
 import signal
@@ -8,7 +16,7 @@ from flask_socketio import emit, SocketIO
 from rclpy.node import Node
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package
 import threading
 
 
@@ -28,10 +36,12 @@ class WebInterfaceNode(Node):
         self.rosout_subscription = self.create_subscription(Log, '/rosout', self.on_log, 10)
         self.stop_car_subscription = self.create_subscription(StopCar, '/stop_car', self.on_stop_car, 1)
         self.speed_order_subscription = self.create_subscription(SpeedOrder, "/speed_order", self.on_speed_order, 1)
-        self.motor_feedback_subscription = self.create_subscription(MotorsFeedback, "/motors_feedback", self.on_motors_feedback, 1)
+        self.motor_feedback_subscription = self.create_subscription(MotorsFeedback, "/motors_feedback",
+                                                                    self.on_motors_feedback, 1)
         self.speed_order_input_subscription = self.create_subscription(SpeedInput, "/speed_order_input",
                                                                        self.on_speed_order_input, 1)
-        self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 1)
+        self.delivery_subscription = self.create_subcription(Package, "/detect_package", 1)
+        self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 2)
 
     def on_stop_car(self, stop):
         s = {
@@ -98,15 +108,15 @@ class WebInterfaceNode(Node):
 
     def on_log(self, log):
         if log.level == 10:
-            level = "debug"
+            level = "light"
         elif log.level == 20:
-            level = "info"
+            level = "success"
         elif log.level == 30:
-            level = "warn"
+            level = "warning"
         elif log.level == 40:
-            level = "error"
+            level = "danger"
         elif log.level == 50:
-            level = "fatal"
+            level = "danger"
         self.logs.append({
             "stamp": datetime.datetime.fromtimestamp(log.stamp.sec),
             "level": level,
@@ -142,12 +152,22 @@ def status():
     return render_template("status.html", status=web_interface_node.status)
 
 
-@app.route('/set_speed', methods=["GET", "POST"])
-def set_speed():
+@app.route('/order', methods=["GET", "POST"])
+def order():
     if request.method == 'POST':
         speed = request.form.get('speed')
         web_interface_node.publish_speed(speed)
     return render_template("speed.html", status=web_interface_node.status)
+
+
+@app.route('/lift', methods=["GET", "POST"])
+def lift():
+    if request.method == 'POST':
+        if "enter" in request.form.keys():
+            eprint("publish enter")
+        elif "exit" in request.form.keys():
+            eprint("publish exit")
+    return render_template("lift.html")
 
 
 web_interface_node.start_in_background()
