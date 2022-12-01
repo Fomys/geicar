@@ -3,13 +3,13 @@
 {% block title %}Status{% endblock %}
 
 {% block body %}
-    <table class="status">
-    <thead>
-        <tr>
-            <th>Élément</th>
-            <th>Status</th>
-        </tr>
-    </thead>
+    <table style="width: 50%;" class="table status table-sm mx-auto table-striped">
+        <thead>
+            <tr>
+                <th scope="col" class="col-1">Élément</th>
+                <th scope="col" class="col-1">Status</th>
+            </tr>
+        </thead>
         <tbody>
             <tr id="stop_car">
                 <td>Stop car</td>
@@ -47,11 +47,15 @@
                 <td>Steering angle (no unit)</td>
                 <td class="status"></td>
             </tr>
+            <tr id="delivery_button">
+                <td>Delivery button</td>
+                <td class="status"></td>
+            </tr>
         </tbody>
-    </table>
+</table>
 
-    <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
-    <script>
+
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>    <script>
         let socket = io();
 
         socket.on('status', function(msg) {

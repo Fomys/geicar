@@ -22,24 +22,25 @@ class DetectPackage(Node):
 
         #Create service to wait for the input of the package.
         #self.srv = self.create_service(ButtonPressed, 'detect_package', self.check_button)
+        self.button = lgpio.gpiochip_open(self.GPIO_HANDLE)
 
-        timer = create_timer(TIMER, self.check_button())
+        lgpio.gpio_claim_input(self.button, self.GPIO_PIN, lFlags=lgpio.SET_BIAS_PULL_DOWN)
 
         self.publish_package = self.create_publisher(Package, 'detect_package', 10)
-        self.publish_package.publish(self.PackageIn)
+        p = Package()
+        p.state_pack = self.PackageIn
+        self.publish_package.publish(p)
 
+        timer = self.create_timer(self.TIMER, self.check_button)
 
 
     def check_button(self):
-        self.get_logger().info('Incoming request')
         #self.done = False
         self.PackageIn = False
 
         # Set up the pin 6 en pull down
-        button = lgpio.gpiochip_open(self.GPIO_HANDLE)
 
         #lgpio.gpio_claim_alert(button, 6, lgpio.FALLING_EDGE, lFlags=lgpio.SET_BIAS_PULL_DOWN)
-        lgpio.gpio_claim_input(button, self.GPIO_PIN, lFlags=lgpio.SET_BIAS_PULL_DOWN)
 
         # Add callback for rising edge (0 to 1)
         #c = lgpio.callback(button, 6, lgpio.FALLING_EDGE, self.button_callback)
@@ -49,13 +50,16 @@ class DetectPackage(Node):
         #while lgpio.gpio_read(button, self.GPIO_PIN) == 0:
         #   pass
 
-        if lgpio.gpio_read(button, self.GPIO_PIN and self.state == False) == 1:
-            self.PackageIn = not self.PackageIn
+        if lgpio.gpio_read(self.button, self.GPIO_PIN) == 1:
+            self.PackageIn = True
+        else:
+            self.PackageIn = False
 
-        self.state = lgpio.gpio_read(button, self.GPIO_PIN)
+        self.state = lgpio.gpio_read(self.button, self.GPIO_PIN)
 
-        self.publish_package.publish(self.PackageIn)
-        self.get_logger().info("Action done")
+        p = Package()
+        p.state_pack = self.PackageIn
+        self.publish_package.publish(p)
 
 
     #Callback function for the GPIO interrupt
