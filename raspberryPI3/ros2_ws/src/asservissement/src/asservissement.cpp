@@ -96,8 +96,10 @@ private:
     //For PID Calculations
     float sumIntegralLeft;
     float sumIntegralRight;
+
     float previousSpeedErrorLeft;
     float previousSpeedErrorRight;
+
 
     //**Control variables**
     uint8_t leftRearPwmCmd;
@@ -242,29 +244,47 @@ private:
         leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
         rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
 
-        //In order to avoid breaking the motor,
-        // we prevent the motors to spin backwards (The command must be greater than 50.)
-        if(leftPwmCmd < 0)
-            leftPwmCmd = 0;
-        else if(leftPwmCmd > 50)
-            leftPwmCmd = 50;
+        if ( requestedSpeed >= 0)
+        {
+            if (leftPwmCmd < 0)
+                leftPwmCmd = 0;
+            else if (leftPwmCmd > 50)
+                leftPwmCmd = 50;
 
-        if(rightPwmCmd < 0)
-            rightPwmCmd = 0;
-        else if(rightPwmCmd > 50)
-            rightPwmCmd = 50;
+            if (rightPwmCmd < 0)
+                rightPwmCmd = 0;
+            else if (rightPwmCmd > 50)
+                rightPwmCmd = 50;
+            //Set the offset, because cmd = [0 : 50] goes backwards
+            // And cmd = [50 : 100] goes forwards
+            leftPwmCmd += 50;
+            rightPwmCmd += 50;
+        }
+        else if (requestedSpeed < 0)
+        {
+            if (leftPwmCmd > 0)
+                leftPwmCmd = 0;
+            else if (leftPwmCmd < -50)
+                leftPwmCmd = -50;
 
-        //Set the offset, because cmd = [0 : 50] goes backwards
-        // And cmd = [50 : 100] goes forwards
-        leftPwmCmd += 50;
-        rightPwmCmd += 50;
+            if (rightPwmCmd > 0)
+                rightPwmCmd = 0;
+            else if (rightPwmCmd < -50)
+                rightPwmCmd = -50;
+            //Set the offset, because cmd = [0 : 50] goes backwards
+            // And cmd = [50 : 100] goes forwards
+            leftPwmCmd += 50;
+            rightPwmCmd += 50;
+        }
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
     }
 
     void asservSteering ()
     {
+       //Computation of the error for Kp
         float errorAngle = currentAngle - requestedSteerAngle;
+
         //Command's calculation
         if (abs(errorAngle)<TOLERANCE_ANGLE){
             steeringPwmCmd = STOP;

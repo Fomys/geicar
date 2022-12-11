@@ -5,20 +5,34 @@
 {% endblock %}
 
 {% block body %}
-    Consigne de vitesse&nbsp;: <span id="speed_order"></span>
 
     <form method="POST">
-        <label for="speed">Vitesse&nbsp;:</label>
-        <input id="speed" name="speed" step="0.01" type="number">
+          <div class="mb-3">
+                <label for="speed" class="form-label">Speed (current order: <span id="speed_order"></span>)</label>
+                <input type="number" step="0.01" class="form-control" id="speed" name="speed" aria-describedby="speed_help">
+                <div id="speed_help" class="form-text">Speed of the car</div>
+          </div>
+          <div class="mb-3">
+                <label for="speed" class="form-label">Angle order (current order: <span id="angle_order"></span>)</label>
+                <input type="number" step="0.01" class="form-control" id="angle" name="angle" aria-describedby="speed_help">
+                <div id="speed_help" class="form-text">Angle of the car</div>
+          </div>
+          <button type="submit" class="btn btn-primary">Send</button>
     </form>
 
-     <script src="https://cdn.socket.io/4.5.3/socket.io.min.js" integrity="sha384-WPFUvHkB1aHA5TDSZi6xtDgkF0wXJcIIxXhC6h8OT8EH3fC5PWro5pWJ1THjcfEi" crossorigin="anonymous"></script>
+
+
+    <script src="{{ url_for('static', filename='socket.io.min.js') }}"></script>
     <script>
         let socket = io();
 
         socket.on('status', function(msg) {
             if(msg.hasOwnProperty("speed_order")) {
                 let span = document.getElementById("speed_order");
+                span.innerText = msg["speed_order"].text;
+            }
+            if(msg.hasOwnProperty("angle_order")) {
+                let span = document.getElementById("angle_order");
                 span.innerText = msg["speed_order"].text;
             }
         });

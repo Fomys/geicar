@@ -1,0 +1,3 @@
+bool state_package #current state of package
+---
+bool package_update #switch state if button has been pressed

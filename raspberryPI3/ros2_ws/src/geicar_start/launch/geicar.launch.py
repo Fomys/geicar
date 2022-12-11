@@ -36,7 +36,11 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-
+    detect_package = Node(
+        package = "detect_package",
+        executable="detect_package",
+        emulate_tty=True
+    )
 
     config_dir = os.path.join(get_package_share_directory('imu_filter_madgwick'), 'config')
 
@@ -67,5 +71,6 @@ def generate_launch_description():
     ld.add_action(system_check_node)
     ld.add_action(asservissement)
     ld.add_action(web_server)
+    ld.add_action(detect_package)
 
     return ld
