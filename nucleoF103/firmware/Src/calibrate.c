@@ -46,7 +46,7 @@ void calibrate(void){
 	float coef_a;
 	float coef_b;
 
-	car_control(DISABLED, DISABLED, DISABLED);	//Stop the car
+	car_control(DISABLED, DISABLED, DISABLED, 0, 0);	//Stop the car
 
 	uint8_t dataCalibration[8] = {CALIBRATION_IN_PROGRESS, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
 	CAN_Send(dataCalibration, CAN_ID_CALIBRATION_MODE);	//Indicate that calibration is in progress (to raspberry)

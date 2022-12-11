@@ -1,0 +1,1 @@
+bool travelling # boolean to indicate if the car is travelling

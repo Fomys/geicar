@@ -53,6 +53,7 @@
 
 /* USER CODE BEGIN Includes */
 
+#define MAX_TIMEOUT 500
 /* Modes
  * 0- Calibration
  * 1- Control
@@ -114,6 +115,9 @@ int steeringSpeed = -1;
 
 //Communication checking request
 int commCheckingRequest = 0;
+
+//Timeout variable
+uint32_t timeout = 0;
 
 extern CAN_HandleTypeDef hcan;
 
@@ -334,16 +338,29 @@ int main(void)
 
         /* Update motors command*/
         if (UPDATE_CMD_FLAG){
+
             UPDATE_CMD_FLAG = 0;
+            timeout = HAL_GetTick(); //get time of last mesage
             
 			if (mode == 0){	//Calibration Mode
             	calibrate();
             	mode = 1;
 			}
 			else{	//Control Mode
-            	car_control(leftRearSpeed,rightRearSpeed, steeringSpeed);
+            	car_control(leftRearSpeed,rightRearSpeed, steeringSpeed, VMG_mes, VMD_mes);
 			}
+
         }
+        else if (!UPDATE_CMD_FLAG && HAL_GetTick() - timeout > MAX_TIMEOUT) //Check that a message has been received in the last 3 s
+        {
+        	car_control(DISABLED, DISABLED, DISABLED, 0, 0);
+        }
+        else if (HAL_GetTick() - timeout < MAX_TIMEOUT)
+        {
+
+			car_control(leftRearSpeed,rightRearSpeed, steeringSpeed, VMG_mes, VMD_mes);
+        }
+
         
         /* CAN : Sending data*/
         if (CAN_SEND_MOTORS){

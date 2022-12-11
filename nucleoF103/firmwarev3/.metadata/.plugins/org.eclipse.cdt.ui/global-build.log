@@ -1,0 +1,53 @@
+17:59:58 **** Incremental Build of configuration Debug for project F103 ****
+make -j4 all 
+arm-none-eabi-gcc "../Src/control.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DSTM32F103xB -DUSE_HAL_DRIVER -DSTM32F103RBTx -DSTM32 -DSTM32F1 -DNUCLEO_F103RB -c -I../Drivers/CMSIS/Include -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Inc -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Src/control.d" -MT"Src/control.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Src/control.o"
+../Src/control.c: In function 'PI_speed_left':
+../Src/control.c:106:56: warning: statement with no effect [-Wunused-value]
+  106 |   leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+      |                                                        ^
+../Src/control.c:106:80: warning: statement with no effect [-Wunused-value]
+  106 |   leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+      |                                                                                ^
+../Src/control.c:129:56: warning: statement with no effect [-Wunused-value]
+  129 |   leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+      |                                                        ^
+../Src/control.c:129:80: warning: statement with no effect [-Wunused-value]
+  129 |   leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+      |                                                                                ^
+../Src/control.c: In function 'PI_speed_right':
+../Src/control.c:164:58: warning: statement with no effect [-Wunused-value]
+  164 |  rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+      |                                                          ^
+../Src/control.c:164:83: warning: statement with no effect [-Wunused-value]
+  164 |  rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+      |                                                                                   ^
+../Src/control.c:180:59: warning: statement with no effect [-Wunused-value]
+  180 |   rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+      |                                                           ^
+../Src/control.c:180:84: warning: statement with no effect [-Wunused-value]
+  180 |   rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+      |                                                                                    ^
+../Src/control.c:205:59: warning: statement with no effect [-Wunused-value]
+  205 |   rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+      |                                                           ^
+../Src/control.c:205:84: warning: statement with no effect [-Wunused-value]
+  205 |   rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+      |                                                                                    ^
+../Src/control.c: In function 'PI_angle':
+../Src/control.c:243:53: warning: statement with no effect [-Wunused-value]
+  243 |  anglePwmCmd = angleError * Kp_r + sumIntegralAngle * Ki_r + deltaError * Kd_r;
+      |                                                     ^
+../Src/control.c:243:73: warning: statement with no effect [-Wunused-value]
+  243 |  anglePwmCmd = angleError * Kp_r + sumIntegralAngle * Ki_r + deltaError * Kd_r;
+      |                                                                         ^
+arm-none-eabi-gcc -o "F103.elf" @"objects.list"   -mcpu=cortex-m3 -T"/home/andrea/Projet_INSA/geicar/nucleoF103/firmware/STM32F103RBTX_FLASH.ld" --specs=nosys.specs -Wl,-Map="F103.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Finished building target: F103.elf
+ 
+arm-none-eabi-size   F103.elf 
+arm-none-eabi-objdump -h -S  F103.elf  > "F103.list"
+   text	   data	    bss	    dec	    hex	filename
+  31192	     72	   2368	  33632	   8360	F103.elf
+Finished building: default.size.stdout
+ 
+Finished building: F103.list
+ 

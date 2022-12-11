@@ -1,0 +1,51 @@
+!SESSION 2022-12-10 16:53:15.752 -----------------------------------------------
+eclipse.buildId=Version 1.11.0
+java.version=11.0.16
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-12-10 16:53:38.546
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-12-10 16:53:38.631
+!MESSAGE Log4j initialized with config file /home/andrea/Projet_INSA/geicar/nucleoF103/firmwarev3/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-12-10 16:53:41.960
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-10 16:54:58.884
+!MESSAGE Indexed 'F103' (34 sources, 120 headers) in 11.5 sec: 13,959 declarations; 46,136 references; 20 unresolved inclusions; 90 syntax errors; 60 unresolved names (0.1%)
+!SESSION 2022-12-10 16:55:37.469 -----------------------------------------------
+eclipse.buildId=Version 1.11.0
+java.version=11.0.16
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-12-10 16:55:49.895
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-12-10 16:55:49.979
+!MESSAGE Log4j initialized with config file /home/andrea/Projet_INSA/geicar/nucleoF103/firmwarev3/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-12-10 16:55:56.919
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY org.eclipse.cdt.core 1 0 2022-12-10 16:59:03.183
+!MESSAGE Indexed 'F103_Safe' (20 sources, 79 headers) in 4.33 sec: 4,067 declarations; 17,123 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.0094%)
+!SESSION 2022-12-11 10:55:06.512 -----------------------------------------------
+eclipse.buildId=Version 1.11.0
+java.version=11.0.16
+java.vendor=Eclipse Adoptium
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2022-12-11 10:55:15.796
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2022-12-11 10:55:15.922
+!MESSAGE Log4j initialized with config file /home/andrea/Projet_INSA/geicar/nucleoF103/firmwarev3/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2022-12-11 10:55:26.210
+!MESSAGE Started RMI Server, listening on port 41337

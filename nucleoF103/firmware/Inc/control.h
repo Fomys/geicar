@@ -18,7 +18,21 @@
 /**
 *	Controle les MARG, MARD et MAV à partir de modeSpeed et modeSteer recus via le CAN
 **/
-void car_control(int left_rear_speed, int right_rear_speed, int steering_angle);
+void car_control(int left_rear_speed, int right_rear_speed, int steering_speed, int current_left, int current_right);
+
+/**
+ * pi CONTROLLER left
+ */
+int PI_speed_left(int left_rear_speed, int currentLeftRearSpeed);
+
+/*
+ * PI controller right
+ */
+int PI_speed_right(int right_rear_speed, int currentRightRearSpeed);
+
+int PI_angle(int steering_angle);
+
+
 
 
 #endif /* CONTROL_H_ */

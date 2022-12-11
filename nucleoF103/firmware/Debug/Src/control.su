@@ -1,1 +1,4 @@
-../Src/control.c:24:6:car_control	24	static
+../Src/control.c:48:6:car_control	24	static
+../Src/control.c:82:5:PI_speed_left	32	static
+../Src/control.c:145:5:PI_speed_right	32	static
+../Src/control.c:224:5:PI_angle	32	static
