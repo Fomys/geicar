@@ -46,10 +46,15 @@ public:
                 "motors_feedback", 10, std::bind(&asservissement::motorsFeedbackCallback, this, _1));
 
         //Users input
+        /*
         subscription_angle_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
                 "angle_order", 10, std::bind(&asservissement::UpdateCmdAngle, this, _1));
         subscription_speed_order_ = this->create_subscription<interfaces::msg::SpeedOrder>(
                 "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeed, this, _1));
+        */
+        subscription_cmd_vel_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(
+                "cmd_vel", 10, std::bind(&asservissement::UpdateCmdVel, this, _1));
+
 
         //Timer for update of parameters
         timer_parameter_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
@@ -70,9 +75,9 @@ private:
 
     //Subscriptions
     rclcpp::Subscription<interfaces::msg::MotorsFeedback>::SharedPtr subscription_motors_feedback_;
-    rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_angle_order_;
-    rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
-
+    //rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_angle_order_;
+    //rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
+    rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr subscription_cmd_vel_;
     //Timer
     rclcpp::TimerBase::SharedPtr timer_parameter_;
     rclcpp::TimerBase::SharedPtr timer_cmd_;
@@ -123,18 +128,31 @@ private:
     /*
      * Callback to update the angle command value by
      */
-    void UpdateCmdAngle(const interfaces::msg::AngleOrder & angle)
+    /*void UpdateCmdAngle(const interfaces::msg::AngleOrder & angle)
     {
         requestedSteerAngle = angle.angle_order;
         RCLCPP_INFO(this->get_logger(), "Valeur Angle : %f", requestedSteerAngle);
-    }
+    }*/
 
-
+    /*
     void UpdateCmdSpeed(const interfaces::msg::SpeedOrder & speed)
     {
         requestedSpeed  = speed.speed_order;
         //RCLCPP_INFO(this->get_logger(), "Valeur Speed : %f", requestedSpeed);
+    }*/
+
+    /*
+     * Callback to update the velocity command value
+     */
+    void UpdateCmdVel(const geometry_msgs::msg::TwistStamped & cmd_vel)
+    {
+        // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
+        requestedSpeed = cmd_vel.twist.linear.x/0.0105 ;
+        //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
+        requestedSteerAngle = cmd_vel.twist.angular.z * (360/(2*3.14*10)) ;
     }
+
+
 
     /*
      * Callback function when feedback topic is updated
