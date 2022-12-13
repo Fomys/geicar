@@ -10,6 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(interfaces REQUIRED)
 find_package(std_srvs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 # uncomment the following section in order to fill in
 # further dependencies manually.
@@ -18,7 +19,7 @@ find_package(std_srvs REQUIRED)
 add_executable(asservissement
         src/asservissement.cpp)
 
-ament_target_dependencies(asservissement rclcpp interfaces std_srvs)
+ament_target_dependencies(asservissement rclcpp interfaces std_srvs geometry_msgs)
 ament_export_include_directories(include)
 
 target_include_directories(asservissement PUBLIC

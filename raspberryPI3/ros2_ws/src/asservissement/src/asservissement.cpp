@@ -1,9 +1,27 @@
+
 #include "../include/asservissement/asservissement.h"
 
 using namespace std;
 using placeholders::_1;
 
+int min(int a, int b) {
+	if(a < b) {
+		return a;
+	} else {
+		return b;
+	}
+}
+int max(int a, int b) {
+	if(a < b) {
+		return b;
+	} else {
+		return a;
+	}
+}
+
 class asservissement : public rclcpp::Node{
+
+
 
 public:
     asservissement():Node("asservissement_node")
@@ -13,11 +31,11 @@ public:
         //PID of the motor of the left wheel
         this->declare_parameter("kp_l", 1.0);
         this->declare_parameter("ki_l", 0.01);
-        this->declare_parameter("kd_l", 0.0);
+        this->declare_parameter("kd_l", 0.01);
         //PID of the motor of the right wheel
         this->declare_parameter("kp_r", 1.0);
         this->declare_parameter("ki_r", 0.01);
-        this->declare_parameter("kd_r", 0.0);
+        this->declare_parameter("kd_r", 0.01);
         //PID of the motor of direction
         this->declare_parameter("kp_s", 1.0);
         this->declare_parameter("ki_s", 1.0);
@@ -52,7 +70,7 @@ public:
         subscription_speed_order_ = this->create_subscription<interfaces::msg::SpeedOrder>(
                 "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeed, this, _1));
         */
-        subscription_cmd_vel_ = this->create_subscription<geometry_msgs::msg::TwistStamped>(
+        subscription_cmd_vel_ = this->create_subscription<geometry_msgs::msg::Twist>(
                 "cmd_vel", 10, std::bind(&asservissement::UpdateCmdVel, this, _1));
 
 
@@ -77,7 +95,7 @@ private:
     rclcpp::Subscription<interfaces::msg::MotorsFeedback>::SharedPtr subscription_motors_feedback_;
     //rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_angle_order_;
     //rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
-    rclcpp::Subscription<geometry_msgs::msg::TwistStamped>::SharedPtr subscription_cmd_vel_;
+    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_cmd_vel_;
     //Timer
     rclcpp::TimerBase::SharedPtr timer_parameter_;
     rclcpp::TimerBase::SharedPtr timer_cmd_;
@@ -99,7 +117,9 @@ private:
 
     float previousSpeedErrorLeft;
     float previousSpeedErrorRight;
-
+    
+    //**Angle Speed Calculation**
+    float previousRequestedAngle = 0;
 
     //**Control variables**
     uint8_t leftRearPwmCmd;
@@ -146,12 +166,18 @@ private:
     /*
      * Callback to update the velocity command value
      */
-    void UpdateCmdVel(const geometry_msgs::msg::TwistStamped & cmd_vel)
+    void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
-        requestedSpeed = cmd_vel.twist.linear.x/0.0105 ;
+        requestedSpeed = (cmd_vel.linear.x/0.0105)/3 ;
         //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
-        requestedSteerAngle = cmd_vel.twist.angular.z * (360/(2*3.14*10)) ;
+        //requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10)))/2 ;
+        requestedSteerAngle = -cmd_vel.angular.z; //in rad/s
+        RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
+
+        //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
+        //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
+	//requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2;
     }
 
 
@@ -205,15 +231,44 @@ private:
     {
         auto motorsOrder = interfaces::msg::MotorsOrder();
         //Asservissement roues
-        asservSpeed();
+        saturSpeed();
         motorsOrder.left_rear_pwm = leftRearPwmCmd;
         motorsOrder.right_rear_pwm = rightRearPwmCmd;
         //Asservissement steering
         asservSteering();
-        motorsOrder.steering_pwm = steeringPwmCmd;
+        //motorsOrder.steering_pwm = steeringPwmCmd;
+        motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
         publisher_can_->publish(motorsOrder);
     }
 
+    void saturSpeed()
+    {
+
+        float leftPwmCmd;
+        float rightPwmCmd;
+
+
+	if (requestedSpeed > 0)
+	{
+	    leftPwmCmd = 65;
+	    rightPwmCmd = 65;
+	} 
+	else if (requestedSpeed < 0)
+	{
+	    leftPwmCmd = 35;
+	    rightPwmCmd = 35;
+	}
+	else 
+	{
+	    leftPwmCmd = 50;
+	    rightPwmCmd = 50; 
+	}
+
+        leftRearPwmCmd = leftPwmCmd;
+        rightRearPwmCmd = rightPwmCmd;
+
+    }
+		
 
     void asservSpeed ()
     {
@@ -242,7 +297,9 @@ private:
 
         //Computation of the command that must be sent to the motors
         leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
-        rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+        rightPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+        //rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
+        //leftPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
 
         if ( requestedSpeed >= 0)
         {
@@ -283,20 +340,47 @@ private:
     void asservSteering ()
     {
        //Computation of the error for Kp
-        float errorAngle = currentAngle - requestedSteerAngle;
+        //float errorAngle = currentAngle - requestedSteerAngle;
+        
 
+        //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
+        if (requestedSteerAngle > 0)
+        {
+ 	     steeringPwmCmd = 100;
+	} 
+	else if (requestedSteerAngle < 0)
+	{
+	     steeringPwmCmd = 0;
+	}
+	else  
+	{
+	     if (currentAngle >= TOLERANCE_ANGLE)
+	     {
+		 steeringPwmCmd = 100;
+	     }
+	     else if (currentAngle <= TOLERANCE_ANGLE)
+	     {
+		steeringPwmCmd = 0;
+	     }
+	     else 
+	     {
+	        steeringPwmCmd = STOP;
+	     }
+	}
         //Command's calculation
-        if (abs(errorAngle)<TOLERANCE_ANGLE){
-            steeringPwmCmd = STOP;
-        }
-        else {
-            if (errorAngle>0) {
-                steeringPwmCmd = MAX_PWM_LEFT;
-            }
-            else {
-                steeringPwmCmd = MAX_PWM_RIGHT;
-            }
-        }
+        //if (abs(errorAngle)<TOLERANCE_ANGLE){
+        //    steeringPwmCmd = STOP;
+        //}
+        //else {
+        //    if (errorAngle>0) {
+        //        steeringPwmCmd = MAX_PWM_LEFT;
+        //    }
+        //    else {
+        //        steeringPwmCmd = MAX_PWM_RIGHT;
+        //    }
+        //}
+
+       
 
     }
 
