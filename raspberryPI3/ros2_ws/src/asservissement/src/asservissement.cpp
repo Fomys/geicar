@@ -106,8 +106,6 @@ private:
     //Requested commands by brain
     float requestedSteerAngle = 0;
     float requestedSpeed = 0;
-    float XLinearSpeedRequested = 0;
-    float AngularSpeedRequested = 0;
 
     //Data from motor feedback
     float currentAngle ;
@@ -172,11 +170,11 @@ private:
     void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
-        XLinearSpeedRequested = cmd_vel.linear.x ;
+        AngularSpeedRequested = (cmd_vel.linear.x/0.0105)/3 ; //curr_cmd.lin/wheel_radius_;
         //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
         //requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10)))/2 ;
-        AngularSpeedRequested = cmd_vel.angular.z;
-        //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
+        requestedSteerAngle = curr_cmd.ang;
+        RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
@@ -234,7 +232,7 @@ private:
     {
         auto motorsOrder = interfaces::msg::MotorsOrder();
         //Asservissement roues
-        asservSpeed();
+        saturSpeed();
         motorsOrder.left_rear_pwm = leftRearPwmCmd;
         motorsOrder.right_rear_pwm = rightRearPwmCmd;
         //Asservissement steering
@@ -251,11 +249,21 @@ private:
         float rightPwmCmd;
 
 
-        if (requestedSpeed > 0)
-        {
-            leftPwmCmd = 65;
-            rightPwmCmd = 65;
-        }
+	if (requestedSpeed > 0)
+	{
+	    leftPwmCmd = 65;
+	    rightPwmCmd = 65;
+	}
+	else if (requestedSpeed < 0)
+	{
+	    leftPwmCmd = 35;
+	    rightPwmCmd = 35;
+	}
+	else
+	{
+	    leftPwmCmd = 50;
+	    rightPwmCmd = 50;
+	}
 
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
@@ -273,13 +281,7 @@ private:
 
         float leftPwmCmd;
         float rightPwmCmd;
-        requestedSpeed = XLinearSpeedRequested/0.095;
-        if(requestedSpeed > 65){
-            requestedSpeed = 65;
-        }
-        else if (requestedSpeed <-65){
-            requestedSpeed = -65;
-        }
+
         //Computation of the error for Kp
         speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
         speedErrorRight = requestedSpeed - currentRightRearSpeed;
@@ -341,26 +343,18 @@ private:
        //Computation of the error for Kp
         //float errorAngle = currentAngle - requestedSteerAngle;
         
-        requestedSteerAngle = AngularSpeedRequested/10;
-        if(requestedSteerAngle > 1.5){
-            requestedSteerAngle = 1.5;
-        }
-        else if(requestedSteerAngle < -1.5){
-            requestedSteerAngle = -1.5;
-        }
 
-        
         //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
         if (requestedSteerAngle > 0)
         {
  	     steeringPwmCmd = 100;
-        }
-        else if (requestedSteerAngle < 0)
-        {
-             steeringPwmCmd = 0;
-        }
-        else
-        {
+	}
+	else if (requestedSteerAngle < 0)
+	{
+	     steeringPwmCmd = 0;
+	}
+	else
+	{
 	     if (currentAngle >= TOLERANCE_ANGLE)
 	     {
 		 steeringPwmCmd = 100;
