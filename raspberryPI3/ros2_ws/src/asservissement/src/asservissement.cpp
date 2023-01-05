@@ -243,7 +243,7 @@ private:
         publisher_can_->publish(motorsOrder);
     }
 
-    void saturSpeed()
+  /*  void saturSpeed()
     {
 
         float leftPwmCmd;
@@ -270,7 +270,7 @@ private:
         rightRearPwmCmd = rightPwmCmd;
 
     }
-		
+		*/
 
     void asservSpeed ()
     {
