@@ -170,11 +170,11 @@ private:
     void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
-        requestedSpeed = (cmd_vel.linear.x/0.0105)/3 ; //curr_cmd.lin/wheel_radius_;
+        requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
         //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
-        //requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10)))/2 ;
-        requestedSteerAngle = -cmd_vel.angular.z;
-        RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
+        requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10))) ;
+        //requestedSteerAngle = cmd_vel.angular.z;
+        //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
@@ -188,7 +188,7 @@ private:
      */
     void motorsFeedbackCallback(const interfaces::msg::MotorsFeedback & motorsFeedback)
     {
-        currentAngle = motorsFeedback.steering_angle * 10;
+        currentAngle = motorsFeedback.steering_angle;
         currentRightRearSpeed = motorsFeedback.right_rear_speed;
         currentLeftRearSpeed = motorsFeedback.left_rear_speed;
 //        RCLCPP_INFO(this->get_logger(), "Valeur currentAngle : %f", currentAngle);
@@ -232,13 +232,14 @@ private:
     {
         auto motorsOrder = interfaces::msg::MotorsOrder();
         //Asservissement roues
-        saturSpeed();
+        //saturSpeed();
+        asservSpeed();
         motorsOrder.left_rear_pwm = leftRearPwmCmd;
         motorsOrder.right_rear_pwm = rightRearPwmCmd;
         //Asservissement steering
         asservSteering();
         //motorsOrder.steering_pwm = steeringPwmCmd;
-        motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
+        //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
         publisher_can_->publish(motorsOrder);
     }
 
@@ -345,41 +346,41 @@ private:
         
 
         //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
-        if (requestedSteerAngle > 0)
+        /*if (requestedSteerAngle > 0)
         {
  	     steeringPwmCmd = 100;
-	}
-	else if (requestedSteerAngle < 0)
-	{
-	     steeringPwmCmd = 0;
-	}
-	else
-	{
-	     if (currentAngle >= TOLERANCE_ANGLE)
-	     {
-		 steeringPwmCmd = 100;
-	     }
-	     else if (currentAngle <= TOLERANCE_ANGLE)
-	     {
-		steeringPwmCmd = 0;
-	     }
-	     else 
-	     {
-	        steeringPwmCmd = STOP;
-	     }
-	}
+        }
+        else if (requestedSteerAngle < 0)
+        {
+             steeringPwmCmd = 0;
+        }
+        else
+        {
+             if (currentAngle >= TOLERANCE_ANGLE)
+             {
+             steeringPwmCmd = 100;
+             }
+             else if (currentAngle <= TOLERANCE_ANGLE)
+             {
+            steeringPwmCmd = 0;
+             }
+             else
+             {
+                steeringPwmCmd = STOP;
+             }
+        }*/
         //Command's calculation
-        //if (abs(errorAngle)<TOLERANCE_ANGLE){
-        //    steeringPwmCmd = STOP;
-        //}
-        //else {
-        //    if (errorAngle>0) {
-        //        steeringPwmCmd = MAX_PWM_LEFT;
-        //    }
-        //    else {
-        //        steeringPwmCmd = MAX_PWM_RIGHT;
-        //    }
-        //}
+        if (abs(errorAngle)<TOLERANCE_ANGLE){
+            steeringPwmCmd = STOP;
+        }
+        else {
+            if (errorAngle>0) {
+                steeringPwmCmd = MAX_PWM_LEFT;
+            }
+            else {
+                steeringPwmCmd = MAX_PWM_RIGHT;
+            }
+        }
 
        
 
