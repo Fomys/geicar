@@ -238,7 +238,7 @@ private:
         motorsOrder.right_rear_pwm = rightRearPwmCmd;
         //Asservissement steering
         asservSteering();
-        //motorsOrder.steering_pwm = steeringPwmCmd;
+        motorsOrder.steering_pwm = steeringPwmCmd;
         //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
         publisher_can_->publish(motorsOrder);
     }
