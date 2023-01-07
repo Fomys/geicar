@@ -310,7 +310,10 @@ private:
 
         RCLCPP_INFO(this->get_logger(), "Lefy %f", leftPwmCmd);
         RCLCPP_INFO(this->get_logger(), "Right : %f", rightPwmCmd);
-
+        if (speedErrorLeft < TOLERANCE)
+        {
+            sumIntegralLeft = 0.0;
+        }
         if ( requestedSpeed >= 0)
         {
             if (leftPwmCmd < 0)
