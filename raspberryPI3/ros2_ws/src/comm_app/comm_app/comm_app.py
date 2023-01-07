@@ -23,7 +23,7 @@ class CommApp(Node):
         self.create_timer(self.duration, self.listener_callback)
         #self.subscription  # prevent unused variable warning
 
-    def listener_callback(self, msg):
+    def listener_callback(self, msg: MessageApp):
         self.get_logger().info('I am in front of the door: "%s"' % msg.data)
         self.detectDoor = True  #Car in front of the door
         self.lgpio.buzzer = lgpio.gpiochip_open(self.GPIO_HANDLE)
