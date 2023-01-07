@@ -287,6 +287,8 @@ private:
         float leftPwmCmd;
         float rightPwmCmd;
 
+        float previousleftPwmCmd;
+
         //Computation of the error for Kp
         speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
         speedErrorRight = requestedSpeed - currentRightRearSpeed;
@@ -310,9 +312,15 @@ private:
 
         RCLCPP_INFO(this->get_logger(), "Lefy %f", leftPwmCmd);
         RCLCPP_INFO(this->get_logger(), "Right : %f", rightPwmCmd);
-        if (speedErrorLeft < TOLERANCE)
+        if (abs(speedErrorLeft) < TOLERANCE)
         {
             sumIntegralLeft = 0.0;
+            leftPwmCmd = previousleftPwmCmd;
+            rightPwmCmd = previousleftPwmCmd;
+        }
+        else {
+            previousleftPwmCmd = leftPwmCmd;
+            previousleftPwmCmd = rightPwmCmd;
         }
         if ( requestedSpeed >= 0)
         {
