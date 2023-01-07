@@ -169,15 +169,16 @@ private:
      */
     void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
     {
-        // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
+        // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
+        //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
         //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
         //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad.
-
+        RCLCPP_INFO(this->get_logger(), "%f", requestedSpeed);
 
         requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
         //requestedSteerAngle = cmd_vel.angular.z;
-        RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
+        //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
