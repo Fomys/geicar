@@ -36,6 +36,12 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    comm_app = Node(
+        package="comm_app",
+        executable="comm_app",
+        emulate_tty=True
+    )
+
     detect_package = Node(
         package = "detect_package",
         executable="detect_package",

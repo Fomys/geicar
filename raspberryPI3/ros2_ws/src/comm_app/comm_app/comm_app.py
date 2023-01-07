@@ -10,13 +10,17 @@ class CommApp(Node):
     #Class constants
     GPIO_HANDLE = 0
     GPIO_PIN = 23
+    duration = 1   # 1 sec of duration
 
     #Class variables
     detectDoor = False #Car not in front of the door
+    #timer = True
 
     def __init__(self):
         super().__init__('comm_app')
         self.subscription = self.create_subscription(MessageApp, 'comm_app', self.listener_callback, 10)
+        #self.timer = self.create_timer(self.duration, self.listener_callback)
+        self.create_timer(self.duration, self.listener_callback)
         #self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):
@@ -28,7 +32,7 @@ class CommApp(Node):
         lgpio.gpio_write(self.buzzer, self.GPIO_PIN, 0)
 
         lgpio.gpio_claim_output(self.buzzer, self.GPIO_PIN, 1, lFlags=0)
-        #timer = self.create_timer(self.TIMER, self.check_button)
+
 
 def main():
     rclpy.init()
