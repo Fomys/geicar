@@ -18,7 +18,7 @@ class CommApp(Node):
 
     def __init__(self):
         super().__init__('comm_app')
-        self.subscription = self.create_subscription(MessageApp, 'comm_app', self.listener_callback, 10)
+        self.subscription = self.create_subscription(MessageApp, 'detect_package', self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
         #self.timer = self.create_timer(self.duration, self.listener_callback)
         #self.create_timer(self.duration, self.listener_callback)
