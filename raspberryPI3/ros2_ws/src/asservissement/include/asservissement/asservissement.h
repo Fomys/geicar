@@ -33,7 +33,7 @@
 #define STOP 50
 #define MAX_PWM_LEFT 0
 #define MAX_PWM_RIGHT 100
-#define TOLERANCE_ANGLE 0.02    // Previous value  0.07
+#define TOLERANCE_ANGLE 0.03    // Previous value  0.07
 
 
 
