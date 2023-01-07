@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-                "test_comm = comm_app.comm_app:main"
+            "comm_app = comm_app.comm_app:main"
         ],
     },
 )
