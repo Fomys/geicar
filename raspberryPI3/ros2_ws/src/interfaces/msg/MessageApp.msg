@@ -1,0 +1,1 @@
+bool detectDoor # True if the door in front has been detected
