@@ -308,8 +308,8 @@ private:
         //leftPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
 
 
-        RCLCPP_INFO(this->get_logger(), "Lefy %f", leftPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "Right : %f", rightPwmCmd);
+        //RCLCPP_INFO(this->get_logger(), "Lefy %f", leftPwmCmd);
+        //RCLCPP_INFO(this->get_logger(), "Right : %f", rightPwmCmd);
 
         if ( requestedSpeed >= 0)
         {
@@ -346,8 +346,8 @@ private:
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
 
-        RCLCPP_INFO(this->get_logger(), "Left pwm %d", leftRearPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "right pwm %d", rightRearPwmCmd);
+        //RCLCPP_INFO(this->get_logger(), "Left pwm %d", leftRearPwmCmd);
+        //RCLCPP_INFO(this->get_logger(), "right pwm %d", rightRearPwmCmd);
     }
 
     void asservSteering ()
