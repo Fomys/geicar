@@ -12,7 +12,7 @@ class CommApp(Node):
     GPIO_PIN = 23
 
     #Class variables
-    detectDoor = False #Car in front of the door
+    detectDoor = False #Car not in front of the door
 
     def __init__(self):
         super().__init__('comm_app')
@@ -21,7 +21,7 @@ class CommApp(Node):
 
     def listener_callback(self, msg):
         self.get_logger().info('I am in front of the door: "%s"' % msg.data)
-        self.detectDoor = True
+        self.detectDoor = True  #Car in front of the door
         self.lgpio.buzzer = lgpio.gpiochip_open(self.GPIO_HANDLE)
         lgpio.gpio_write(self.buzzer, self.GPIO_PIN, 1)
         self.lgpio.sleep(5)
@@ -41,7 +41,6 @@ def main():
     # when the garbage collector destroys the node object)
     comm_app.destroy_node()
     rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()
