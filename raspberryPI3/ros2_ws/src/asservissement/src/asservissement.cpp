@@ -177,7 +177,7 @@ private:
 
         requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
         //requestedSteerAngle = cmd_vel.angular.z;
-        //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
+        RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
