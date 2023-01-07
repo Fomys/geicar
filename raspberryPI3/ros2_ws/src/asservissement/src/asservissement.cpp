@@ -171,8 +171,11 @@ private:
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
-        //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
-        requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10))) ;
+        //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
+        //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad.
+
+
+        requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
         //requestedSteerAngle = cmd_vel.angular.z;
         //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
