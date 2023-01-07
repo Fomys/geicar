@@ -31,11 +31,11 @@ public:
         //Parameter declaration for gains in PID
         //PID of the motor of the left wheel
         this->declare_parameter("kp_l", 1.0);
-        this->declare_parameter("ki_l", 0.1);
+        this->declare_parameter("ki_l", 0.0);
         this->declare_parameter("kd_l", 0.0);
         //PID of the motor of the right wheel
         this->declare_parameter("kp_r", 1.0);
-        this->declare_parameter("ki_r", 0.1);
+        this->declare_parameter("ki_r", 0.0);
         this->declare_parameter("kd_r", 0.0);
         //PID of the motor of direction
         this->declare_parameter("kp_s", 1.0);
