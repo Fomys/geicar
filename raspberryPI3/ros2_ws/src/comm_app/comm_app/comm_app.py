@@ -19,7 +19,7 @@ class CommApp(Node):
 
     def __init__(self):
         super().__init__('comm_app')
-        self.subscription = self.create_subscription(frontDoor, 'comm_app', self.listener_callback, 10)
+        self.subscription = self.create_subscription(MessageApp, 'comm_app', self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
 
     def listener_callback(self, msg):

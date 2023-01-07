@@ -348,7 +348,7 @@ private:
     void asservSteering ()
     {
        //Computation of the error for Kp
-        //float errorAngle = currentAngle - requestedSteerAngle;
+        float errorAngle = currentAngle - requestedSteerAngle;
         
 
         //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
