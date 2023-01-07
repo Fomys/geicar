@@ -307,6 +307,7 @@ private:
         rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
         //leftPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
 
+
         RCLCPP_INFO(this->get_logger(), "Lefy %f", leftPwmCmd);
         RCLCPP_INFO(this->get_logger(), "Right : %f", rightPwmCmd);
 
