@@ -119,7 +119,8 @@ private:
     float I_x_l;
     float I_x_r;
     bool new_cmd;
-    rclcpp::Time time_last;
+
+    rclcpp::Time time_last = this->get_clock()->now();
 
     float previousSpeedErrorLeft;
     float previousSpeedErrorRight;
@@ -187,8 +188,8 @@ private:
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
-	    //requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2;
-        time_last = rclcpp::Node::now();
+	    //requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2
+
         I_x_l = 0;
         I_x_r = 0;
         new_cmd = true;
@@ -317,7 +318,7 @@ private:
 
         // Terme intégral
         if(!new_cmd) {
-            rclcpp::Duration dt(rclcpp::Node::now() - time_last);
+            rclcpp::Duration dt(this->get_clock()->now() - time_last);
             double delta_t = dt.seconds();
             RCLCPP_INFO(this->get_logger(), "Valeur de dt : %f", delta_t);
             I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
@@ -326,7 +327,8 @@ private:
         else
             new_cmd = false;
 
-        time_last = rclcpp::Node::now();
+        RCLCPP_INFO(this->get_logger(), "Deuxième passage dans asservissement");
+        time_last = this->get_clock()->now();
 
         // Calcul de la commande
         leftPwmCmd = P_x_l + I_x_l;
