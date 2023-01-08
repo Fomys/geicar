@@ -18,7 +18,6 @@
 //Messages
 #include "interfaces/msg/motors_order.hpp"
 #include "interfaces/msg/motors_feedback.hpp"
-#include "interfaces/msg/motors_feedback.hpp"
 //#include "interfaces/msg/angle_order.hpp"
 //#include "interfaces/msg/speed_order.hpp"
 
@@ -29,7 +28,7 @@
 
 //Defines
 #define PERIOD_UPDATE_PARAM 1000ms //to update params every second
-#define PERIOD_UPDATE_CMD 1ms //to execute cmd by brain every ms
+#define PERIOD_UPDATE_CMD 2000ms //to execute cmd by brain every ms
 #define STOP 50
 #define MAX_PWM_LEFT 0
 #define MAX_PWM_RIGHT 100
