@@ -188,7 +188,7 @@ private:
         if(cmd_vel.angular.z == 0.0 or cmd_vel.linear.x == 0.0)
             requestedSteerAngle = 0.0;
         else
-            requestedSteerAngle = atan(WHEELBASE*(cmd_vel.angular.z)/cmd_vel.linear.x);
+            requestedSteerAngle = -atan(WHEELBASE*(cmd_vel.angular.z)/cmd_vel.linear.x);
 
 
         if(requestedSteerAngle < -1)
