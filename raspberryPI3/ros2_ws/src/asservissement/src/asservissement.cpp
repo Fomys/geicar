@@ -341,8 +341,8 @@ private:
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
 
-        RCLCPP_INFO(this->get_logger(), "Left pwm %f", leftRearPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "right pwm %f", rightRearPwmCmd);
+        RCLCPP_INFO(this->get_logger(), "Left pwm %d", leftRearPwmCmd);
+        RCLCPP_INFO(this->get_logger(), "right pwm %d", rightRearPwmCmd);
     }
 
     void asservSteering ()
