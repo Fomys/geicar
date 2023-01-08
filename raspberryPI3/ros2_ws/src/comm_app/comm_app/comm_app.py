@@ -40,11 +40,11 @@ class CommApp(Node):
         if self.PackageIn:
             lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 1)
             m.detectDoor = True
-        else
+        else:
             lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 0)
             m.detectDoor = False
 
-#lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 1)
+        #lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 1)
         #self.lgpio.sleep(5)
         #lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 0)
 
