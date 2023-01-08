@@ -39,9 +39,9 @@ public:
         this->declare_parameter("ki_r", 900.0);
         this->declare_parameter("kd_r", 0.0);
         //PID of the motor of direction
-        //this->declare_parameter("kp_s", 1.0);
-        //this->declare_parameter("ki_s", 1.0);
-        //this->declare_parameter("kd_s", 1.0);
+        this->declare_parameter("kp_s", 1.0);
+        this->declare_parameter("ki_s", 1.0);
+        this->declare_parameter("kd_s", 1.0);
 
         //Set value of the parameter for use
         Kp_l = this->get_parameter("kp_l").get_parameter_value().get<float>();
