@@ -1,7 +1,8 @@
 import rclpy
 from rclpy.node import Node
 #from interfaces.msg import MessageApp
-from interfaces.msg import Package
+#from interfaces.msg import Package
+from interfaces.msg import MotorsFeedback
 import lgpio
 #import time
 
@@ -19,14 +20,14 @@ class CommApp(Node):
 
     def __init__(self):
         super().__init__('comm_app')
-        self.subscription = self.create_subscription(Package, "/detect_package", self.listener_callback, 10)
+        self.subscription = self.create_subscription(MotorsFeedback, "/motors_feedback", self.listener_callback, 10)
         self.subscription  # prevent unused variable warning
         #self.publish_package = self.create_publisher(MessageApp, 'comm_app', 10)
         #self.timer = self.create_timer(self.duration, self.listener_callback)
         #self.create_timer(self.duration, self.listener_callback)
 
 
-    def listener_callback(self, msg: Package):
+    def listener_callback(self, msg: MotorsFeedback):
         #self.get_logger().info('I am in front of the door: "%s"' % msg.data)
         self.get_logger().info(str(msg))
         #m = MessageApp()
