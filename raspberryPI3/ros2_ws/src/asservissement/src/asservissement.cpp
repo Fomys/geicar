@@ -190,9 +190,9 @@ private:
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
 	    //requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2
 
-        I_x_l = 0;
-        I_x_r = 0;
-        new_cmd = true;
+        //I_x_l = 0;
+        //I_x_r = 0;
+        //new_cmd = true;
 
 
     }
@@ -317,14 +317,12 @@ private:
         P_x_r = speedErrorRight * Kp_r;
 
         // Terme intégral
-        if(!new_cmd) {
-            rclcpp::Duration dt(this->get_clock()->now() - time_last);
-            double delta_t = dt.seconds()*0.001;
-            I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
-            I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
-        }
-        else
-            new_cmd = false;
+
+        rclcpp::Duration dt(this->get_clock()->now() - time_last);
+        double delta_t = dt.seconds()*0.001;
+        I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
+        I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
+
         time_last = this->get_clock()->now();
 
         // Calcul de la commande
