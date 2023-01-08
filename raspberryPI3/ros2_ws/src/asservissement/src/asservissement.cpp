@@ -181,7 +181,7 @@ private:
         //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
         //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad but we don't know how to constraint it. It is between -1 and 1 so let's calibrate it.
         //requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
-        requestedSteerAngle = -cmd_vel.angular.z ;
+        requestedSteerAngle = -cmd_vel.angular.z * 2 ;
         //RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
 
 
