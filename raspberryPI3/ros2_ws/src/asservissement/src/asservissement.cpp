@@ -179,10 +179,13 @@ private:
         //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
         //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
-        //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad.
-        RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
+        //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad but we don't know how to constraint it. It is between -1 and 1 so let's calibrate it.
+        //requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
+        requestedSteerAngle = cmd_vel.angular.z ;
+        //RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
 
-        requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
+
+
         //requestedSteerAngle = cmd_vel.angular.z;
         //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
