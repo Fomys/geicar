@@ -35,6 +35,7 @@ class CommApp(Node):
         #self.get_logger().info('I am in front of the door: "%s"' % msg.data)
         m = MessageApp()
         #m.detectDoor = True  #Car in front of the door
+
         #self.lgpio.buzzer = lgpio.gpiochip_open(self.GPIO_HANDLE)
         if self.PackageIn = True
             lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 1)
