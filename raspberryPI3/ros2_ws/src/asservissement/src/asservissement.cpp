@@ -395,8 +395,8 @@ private:
             rightPwmCmd += 50;
         }
 
-        RCLCPP_INFO(this->get_logger(), "La commande envoyée pour la roue gauche est LeftPwmCmd = %f", leftPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "La commande envoyée pour la roue droite est RightPwmCmd : %f", rightPwmCmd);
+        RCLCPP_INFO(this->get_logger(), "LeftPwmCmd = %f, P_x_l = %f, I_x_l = %f", leftPwmCmd, P_x_l, I_x_l);
+        RCLCPP_INFO(this->get_logger(), "RightPwmCmd : %f, P_x_l = %f, I_x_l = %f", rightPwmCmd, P_x_r, I_x_r);
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
     }
