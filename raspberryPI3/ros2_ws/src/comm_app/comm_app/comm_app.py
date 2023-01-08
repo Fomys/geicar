@@ -37,7 +37,7 @@ class CommApp(Node):
         #m.detectDoor = True  #Car in front of the door
 
         #self.lgpio.buzzer = lgpio.gpiochip_open(self.GPIO_HANDLE)
-        if self.PackageIn = True
+        if self.PackageIn == True
             lgpio.gpio_write(self.buzzer, self.GPIO_PIN2, 1)
             m.detectDoor = True
         else
