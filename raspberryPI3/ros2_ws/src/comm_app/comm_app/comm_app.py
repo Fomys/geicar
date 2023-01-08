@@ -27,8 +27,8 @@ class CommApp(Node):
         self.publish_package = self.create_publisher(MessageApp, 'comm_app', 10)
         #self.timer = self.create_timer(self.duration, self.listener_callback)
         #self.create_timer(self.duration, self.listener_callback)
-
-
+        p = Package()
+        p.state_pack = self.PackageIn
 
     def listener_callback(self, msg: MotorsFeedback):
         self.get_logger().info(str(msg))
@@ -50,7 +50,6 @@ class CommApp(Node):
 
         #lgpio.gpio_claim_output(self.buzzer, self.GPIO_PIN, 1, lFlags=0)
         m = MessageApp()
-
 
 def main():
     rclpy.init()
