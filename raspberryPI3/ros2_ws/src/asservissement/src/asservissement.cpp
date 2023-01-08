@@ -181,12 +181,21 @@ private:
         //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
         //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad but we don't know how to constraint it. It is between -1 and 1 so let's calibrate it.
         //requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
-        requestedSteerAngle = -cmd_vel.angular.z * 4 ;
-        if(requestedSteerAngle > 1.0)
-            requestedSteerAngle = 1.0;
-        else if(requestedSteerAngle < -1.0)
+
+
+
+        RCLCPP_INFO(this->get_logger(), "requestedSteerAngle avant limitation : %f", requestedSteerAngle);
+        if(cmd_vel.angular.z == 0.0 or cmd_vel.linear.x == 0.0)
+            requestedSteerAngle = 0.0;
+        else
+            requestedSteerAngle = atan(WHEELBASE*(cmd_vel.angular.z)/cmd_vel.linear.x);
+
+
+        if(requestedSteerAngle < -1)
             requestedSteerAngle = -1.0;
-        
+        else if (requestedSteerAngle > 1)
+            requestedSteerAngle = 1.0;
+
         //RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
 
 
