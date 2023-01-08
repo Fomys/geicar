@@ -180,7 +180,7 @@ private:
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
         //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
         //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad.
-        RCLCPP_INFO(this->get_logger(), "%f", requestedSpeed);
+        RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
 
         requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
         //requestedSteerAngle = cmd_vel.angular.z;
@@ -319,15 +319,12 @@ private:
         // Terme intégral
         if(!new_cmd) {
             rclcpp::Duration dt(this->get_clock()->now() - time_last);
-            double delta_t = dt.seconds();
-            RCLCPP_INFO(this->get_logger(), "Valeur de dt : %f", delta_t);
+            double delta_t = dt.seconds()*0.001;
             I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
             I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
         }
         else
             new_cmd = false;
-
-        RCLCPP_INFO(this->get_logger(), "Deuxième passage dans asservissement");
         time_last = this->get_clock()->now();
 
         // Calcul de la commande
@@ -398,8 +395,8 @@ private:
             rightPwmCmd += 50;
         }
 
-        RCLCPP_INFO(this->get_logger(), "LeftPwmCmd %f", leftPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "RightPwmCmd : %f", rightPwmCmd);
+        RCLCPP_INFO(this->get_logger(), "La commande envoyée pour la roue gauche est LeftPwmCmd = %f", leftPwmCmd);
+        RCLCPP_INFO(this->get_logger(), "La commande envoyée pour la roue droite est RightPwmCmd : %f", rightPwmCmd);
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
     }
