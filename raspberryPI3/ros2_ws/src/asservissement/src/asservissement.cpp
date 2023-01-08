@@ -118,6 +118,7 @@ private:
     float sumIntegralRight;
     float I_x_l;
     float I_x_r;
+    bool new_cmd;
     rclcpp::Time time_last;
 
     float previousSpeedErrorLeft;
@@ -190,6 +191,7 @@ private:
         time_last = rclcpp::Node::now();
         I_x_l = 0;
         I_x_r = 0;
+        new_cmd = true;
 
 
     }
@@ -314,12 +316,16 @@ private:
         P_x_r = speedErrorRight * Kp_r;
 
         // Terme intégral
+        if(!new_cmd) {
+            rclcpp::Duration dt(rclcpp::Node::now() - time_last);
+            double delta_t = dt.seconds();
+            RCLCPP_INFO(this->get_logger(), "Valeur de dt : %f", delta_t);
+            I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
+            I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
+        }
+        else
+            new_cmd = false;
 
-        rclcpp::Duration dt(rclcpp::Node::now() - time_last);
-        double delta_t = dt.seconds();
-        RCLCPP_INFO(this->get_logger(), "Valeur de dt : %f", delta_t);
-        I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
-        I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
         time_last = rclcpp::Node::now();
 
         // Calcul de la commande
