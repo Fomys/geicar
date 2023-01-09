@@ -12,7 +12,7 @@ class CommApp(Node):
     GPIO_PIN = 23
 
     #Class variables
-    #detectDoor = False #Car not in front of the door
+
 
     def __init__(self):
         super().__init__("comm_app")
