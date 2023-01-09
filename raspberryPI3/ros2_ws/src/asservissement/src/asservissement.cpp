@@ -179,10 +179,10 @@ private:
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
         //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
-        if (requestedSpeed > 0 and requestedSpeed < 10)
-            requestedSpeed = 10;
-        else if (requestedSpeed < 0 and requestedSpeed > -10)
-            requestedSpeed = -10;
+        if (requestedSpeed > 0 and requestedSpeed < 15)
+            requestedSpeed = 15;
+        else if (requestedSpeed < 0 and requestedSpeed > -15)
+            requestedSpeed = -15;
 
 
         //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
