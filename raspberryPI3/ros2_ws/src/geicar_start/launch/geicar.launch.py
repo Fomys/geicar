@@ -36,6 +36,12 @@ def generate_launch_description():
         emulate_tty=True
     )
 
+    comm_app = Node(
+        package="comm_app",
+        executable="comm_app",
+        emulate_tty=True
+    )
+
     detect_package = Node(
         package = "detect_package",
         executable="detect_package",
@@ -72,5 +78,6 @@ def generate_launch_description():
     ld.add_action(asservissement)
     ld.add_action(web_server)
     ld.add_action(detect_package)
+    ld.add_action(comm_app)
 
     return ld

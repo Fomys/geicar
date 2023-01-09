@@ -21,7 +21,7 @@
   <exec_depend>system_check</exec_depend>
   <exec_depend>ros2launch</exec_depend>
   <exec_depend>asservissement</exec_depend>
-
+  <exec_depend>comm_app</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>

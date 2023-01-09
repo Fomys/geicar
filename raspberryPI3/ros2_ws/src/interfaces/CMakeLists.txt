@@ -19,6 +19,7 @@ set(msg_files
   "msg/AngleOrder.msg"
   "msg/DistanceOrder.msg"
   "msg/JoystickOrder.msg"
+  "msg/MessageApp.msg"
   "msg/MotorsOrder.msg"
   "msg/MotorsFeedback.msg"
   "msg/GeneralData.msg"
