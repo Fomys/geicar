@@ -15,7 +15,7 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder, MessageApp
 import threading
 
 
@@ -31,6 +31,7 @@ class WebInterfaceNode(Node):
         self.thread = None
         self.logs = []
         self.socket_io = socket_io
+        self.last_bip = False
         self.status = {}
         self.rosout_subscription = self.create_subscription(Log, '/rosout', self.on_log, 10)
         self.stop_car_subscription = self.create_subscription(StopCar, '/stop_car', self.on_stop_car, 1)
@@ -43,6 +44,7 @@ class WebInterfaceNode(Node):
 
         self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 2)
         self.angle_order_publisher = self.create_publisher(AngleOrder, "/angle_order", 2)
+        self.bip_publisher = self.create_publisher(MessageApp, "/reach_door", 1)
 
     def on_stop_car(self, stop):
         s = {
@@ -123,6 +125,10 @@ class WebInterfaceNode(Node):
             msg.angle_order = 0
         self.angle_order_publisher.publish(msg)
 
+    def toggle_bip(self):
+        self.last_bip = not self.last_bip
+        self.bip_publisher.publish(MessageApp(self.last_bip))
+
     def on_log(self, log):
         if log.level == 10:
             level = "light"
@@ -191,7 +197,7 @@ def lift():
 def bip():
     if request.method == 'GET':
         if "bip" in request.args.keys():
-            eprint("publish bip")
+            web_interface_node.toggle_bip()
     return render_template("bip.html")
 
 web_interface_node.start_in_background()
