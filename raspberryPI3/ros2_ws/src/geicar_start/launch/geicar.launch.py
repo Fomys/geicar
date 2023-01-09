@@ -78,5 +78,6 @@ def generate_launch_description():
     ld.add_action(asservissement)
     ld.add_action(web_server)
     ld.add_action(detect_package)
+    ld.add_action(comm_app)
 
     return ld
