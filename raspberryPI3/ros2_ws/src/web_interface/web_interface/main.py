@@ -127,7 +127,9 @@ class WebInterfaceNode(Node):
 
     def toggle_bip(self):
         self.last_bip = not self.last_bip
-        self.bip_publisher.publish(MessageApp(self.last_bip))
+        msg = MessageApp()
+        msg.detect_door = self.last_bip
+        self.bip_publisher.publish()
 
     def on_log(self, log):
         if log.level == 10:
