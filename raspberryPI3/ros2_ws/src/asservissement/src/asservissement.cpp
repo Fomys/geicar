@@ -191,7 +191,7 @@ private:
 
 
 
-        RCLCPP_INFO(this->get_logger(), "requestedSteerAngle avant limitation : %f", requestedSteerAngle);
+        //RCLCPP_INFO(this->get_logger(), "requestedSteerAngle avant limitation : %f", requestedSteerAngle);
         if(cmd_vel.angular.z == 0.0 or cmd_vel.linear.x == 0.0)
             requestedSteerAngle = 0.0;
         else
@@ -203,7 +203,7 @@ private:
         else if (requestedSteerAngle > 1)
             requestedSteerAngle = 1.0;
 
-        //RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
+        RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
 
 
 
