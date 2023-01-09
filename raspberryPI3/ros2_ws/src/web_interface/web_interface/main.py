@@ -129,7 +129,7 @@ class WebInterfaceNode(Node):
         self.last_bip = not self.last_bip
         msg = MessageApp()
         msg.detect_door = self.last_bip
-        self.bip_publisher.publish()
+        self.bip_publisher.publish(msg)
 
     def on_log(self, log):
         if log.level == 10:
