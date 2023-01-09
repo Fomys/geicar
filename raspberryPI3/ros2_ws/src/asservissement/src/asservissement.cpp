@@ -116,8 +116,9 @@ private:
     //For PID Calculations
     float sumIntegralLeft;
     float sumIntegralRight;
-    float I_x_l;
-    float I_x_r;
+    //float I_x_l;
+    //float I_x_r;
+    float I_x;
     bool new_cmd;
 
     rclcpp::Time time_last = this->get_clock()->now();
@@ -267,7 +268,8 @@ private:
         //Asservissement roues
         //saturSpeed();
         asservSpeed();
-        motorsOrder.left_rear_pwm = leftRearPwmCmd;
+        //motorsOrder.left_rear_pwm = leftRearPwmCmd;
+        motorsOrder.left_rear_pwm = rightRearPwmCmd;
         motorsOrder.right_rear_pwm = rightRearPwmCmd;
         //Asservissement steering
         asservSteering();
@@ -307,45 +309,51 @@ private:
 
     void asservSpeed ()
     {
-        float speedErrorLeft;
-        float speedErrorRight;
+        //float speedErrorLeft;
+        //float speedErrorRight;
+        float speedError;
 
         //float deltaErrorLeft;
         //float deltaErrorRight ;
 
-        float leftPwmCmd;
-        float rightPwmCmd;
+        //float leftPwmCmd;
+        //float rightPwmCmd;
+        float PwmCmd;
 
         //float previousleftPwmCmd;
         //float previousrightPwmCmd;
 
         //Termes proportionnels pour moteur droit et gauche
-        float P_x_r;
-        float P_x_l;
+        //float P_x_r;
+        //float P_x_l;
+        float P_x;
 
 
 
         //Computation of the error for Kp
-        speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
-        speedErrorRight = requestedSpeed - currentRightRearSpeed;
+        //speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
+        //speedErrorRight = requestedSpeed - currentRightRearSpeed;
+        speedError = requestedSpeed - currentRightRearSpeed;
 
         // Terme proportionnel
-        P_x_l = speedErrorLeft * Kp_l;
-        P_x_r = speedErrorRight * Kp_r;
+        //P_x_l = speedErrorLeft * Kp_l;
+        //P_x_r = speedErrorRight * Kp_r;
+        P_x = speedError * Kp_r;
 
         // Terme intégral
 
         rclcpp::Duration dt(this->get_clock()->now() - time_last);
         double delta_t = dt.seconds()*0.001;
-        I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
-        I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
+        //I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
+        //I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
+        I_x = I_x + Ki_r * delta_t * speedError;
 
         time_last = this->get_clock()->now();
 
         // Calcul de la commande
-        leftPwmCmd = P_x_l + I_x_l;
-        rightPwmCmd = P_x_r + I_x_r;
-
+        //leftPwmCmd = P_x_l + I_x_l;
+        //rightPwmCmd = P_x_r + I_x_r;
+        PwmCmd = P_x + I_x;
 
 
         //Computation of the error for Ki
@@ -379,6 +387,7 @@ private:
 
         if ( requestedSpeed >= 0)
         {
+            /*
             if (leftPwmCmd < 0)
                 leftPwmCmd = 0;
             else if (leftPwmCmd > 50)
@@ -388,13 +397,22 @@ private:
                 rightPwmCmd = 0;
             else if (rightPwmCmd > 50)
                 rightPwmCmd = 50;
+                */
+            if (PwmCmd < 0)
+                PwmCmd = 0;
+            else if (PwmCmd > 50)
+                PwmCmd = 50;
+
             //Set the offset, because cmd = [0 : 50] goes backwards
             // And cmd = [50 : 100] goes forwards
-            leftPwmCmd += 50;
-            rightPwmCmd += 50;
+
+            PwmCmd += 50;
+            //leftPwmCmd += 50;
+            //rightPwmCmd += 50;
         }
         else if (requestedSpeed < 0)
         {
+            /*
             if (leftPwmCmd > 0)
                 leftPwmCmd = 0;
             else if (leftPwmCmd < -50)
@@ -404,16 +422,24 @@ private:
                 rightPwmCmd = 0;
             else if (rightPwmCmd < -50)
                 rightPwmCmd = -50;
+                */
+            if (PwmCmd > 0)
+                PwmCmd = 0;
+            else if (PwmCmd < -50)
+                PwmCmd = -50;
+
             //Set the offset, because cmd = [0 : 50] goes backwards
             // And cmd = [50 : 100] goes forwards
-            leftPwmCmd += 50;
-            rightPwmCmd += 50;
+            //leftPwmCmd += 50;
+            //rightPwmCmd += 50;
+            PwmCmd += 50;
         }
 
         //RCLCPP_INFO(this->get_logger(), "LeftPwmCmd = %f, P_x_l = %f, I_x_l = %f", leftPwmCmd, P_x_l, I_x_l);
         //RCLCPP_INFO(this->get_logger(), "RightPwmCmd : %f, P_x_l = %f, I_x_l = %f", rightPwmCmd, P_x_r, I_x_r);
-        leftRearPwmCmd = leftPwmCmd;
-        rightRearPwmCmd = rightPwmCmd;
+        //leftRearPwmCmd = leftPwmCmd;
+        //rightRearPwmCmd = rightPwmCmd;
+        rightRearPwmCmd = PwmCmd;
     }
 
     void asservSteering ()
