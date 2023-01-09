@@ -1,6 +1,5 @@
 import sys
 
-
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -8,15 +7,15 @@ def eprint(*args, **kwargs):
 import datetime
 import sys
 
-import rclpy
-import signal
-
 from flask import Flask, render_template, request
 from flask_socketio import emit, SocketIO
+
+import rclpy
 from rclpy.node import Node
+from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder, MessageApp
 import threading
 
 
@@ -32,6 +31,7 @@ class WebInterfaceNode(Node):
         self.thread = None
         self.logs = []
         self.socket_io = socket_io
+        self.last_bip = False
         self.status = {}
         self.rosout_subscription = self.create_subscription(Log, '/rosout', self.on_log, 10)
         self.stop_car_subscription = self.create_subscription(StopCar, '/stop_car', self.on_stop_car, 1)
@@ -41,8 +41,10 @@ class WebInterfaceNode(Node):
         self.speed_order_input_subscription = self.create_subscription(SpeedInput, "/speed_order_input",
                                                                        self.on_speed_order_input, 1)
         self.delivery_subscription = self.create_subscription(Package, "/detect_package", self.on_pacakge_detect, 1)
+
         self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 2)
         self.angle_order_publisher = self.create_publisher(AngleOrder, "/angle_order", 2)
+        self.bip_publisher = self.create_publisher(MessageApp, "/reach_door", 1)
 
     def on_stop_car(self, stop):
         s = {
@@ -123,6 +125,12 @@ class WebInterfaceNode(Node):
             msg.angle_order = 0
         self.angle_order_publisher.publish(msg)
 
+    def toggle_bip(self):
+        self.last_bip = not self.last_bip
+        msg = MessageApp()
+        msg.detect_door = self.last_bip
+        self.bip_publisher.publish(msg)
+
     def on_log(self, log):
         if log.level == 10:
             level = "light"
@@ -187,5 +195,12 @@ def lift():
             eprint("publish exit")
     return render_template("lift.html")
 
+@app.route('/bip', methods=["GET"])
+def bip():
+    if request.method == 'GET':
+        if "bip" in request.args.keys():
+            web_interface_node.toggle_bip()
+    return render_template("bip.html")
+
 web_interface_node.start_in_background()
-app.run(port=5000, host="192.168.1.1")
+app.run(port=5000, host="0.0.0.0")
