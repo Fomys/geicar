@@ -85,8 +85,8 @@ private:
 
       frame.can_id = ID_MOTORS_CMD;
 
-      frame.data[0] = motorsOrder.left_rear_pwm;
-      frame.data[1] = motorsOrder.right_rear_pwm;
+      frame.data[0] = motorsOrder.right_rear_pwm;
+      frame.data[1] = motorsOrder.left_rear_pwm;
       frame.data[2] = motorsOrder.steering_pwm;
 
       return canSend(frame);

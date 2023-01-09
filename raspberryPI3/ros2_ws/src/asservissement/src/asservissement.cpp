@@ -4,7 +4,7 @@
 using namespace std;
 using placeholders::_1;
 
-
+/*
 int min(int a, int b) {
 	if(a < b) {
 		return a;
@@ -19,6 +19,7 @@ int max(int a, int b) {
 		return a;
 	}
 }
+ */
 
 class asservissement : public rclcpp::Node{
 
@@ -30,13 +31,13 @@ public:
 
         //Parameter declaration for gains in PID
         //PID of the motor of the left wheel
-        this->declare_parameter("kp_l", 1.0);
-        this->declare_parameter("ki_l", 0.01);
-        this->declare_parameter("kd_l", 0.01);
+        this->declare_parameter("kp_l", 0.8);
+        this->declare_parameter("ki_l", 1000.0);
+        this->declare_parameter("kd_l", 0.0);
         //PID of the motor of the right wheel
-        this->declare_parameter("kp_r", 1.0);
-        this->declare_parameter("ki_r", 0.01);
-        this->declare_parameter("kd_r", 0.01);
+        this->declare_parameter("kp_r", 0.8);
+        this->declare_parameter("ki_r", 900.0);
+        this->declare_parameter("kd_r", 0.0);
         //PID of the motor of direction
         this->declare_parameter("kp_s", 1.0);
         this->declare_parameter("ki_s", 1.0);
@@ -115,6 +116,11 @@ private:
     //For PID Calculations
     float sumIntegralLeft;
     float sumIntegralRight;
+    float I_x_l;
+    float I_x_r;
+    bool new_cmd;
+
+    rclcpp::Time time_last = this->get_clock()->now();
 
     float previousSpeedErrorLeft;
     float previousSpeedErrorRight;
@@ -169,16 +175,43 @@ private:
      */
     void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
     {
-        // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
+        // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
+        //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
-        //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
-        requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10))) ;
+        //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
+        //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad but we don't know how to constraint it. It is between -1 and 1 so let's calibrate it.
+        //requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
+
+
+
+        RCLCPP_INFO(this->get_logger(), "requestedSteerAngle avant limitation : %f", requestedSteerAngle);
+        if(cmd_vel.angular.z == 0.0 or cmd_vel.linear.x == 0.0)
+            requestedSteerAngle = 0.0;
+        else
+            requestedSteerAngle = -atan(WHEELBASE*(cmd_vel.angular.z)/cmd_vel.linear.x);
+
+
+        if(requestedSteerAngle < -1)
+            requestedSteerAngle = -1.0;
+        else if (requestedSteerAngle > 1)
+            requestedSteerAngle = 1.0;
+
+        //RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
+
+
+
         //requestedSteerAngle = cmd_vel.angular.z;
         //RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
         //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
-	//requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2;
+	    //requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2
+
+        //I_x_l = 0;
+        //I_x_r = 0;
+        //new_cmd = true;
+
+
     }
 
 
@@ -238,12 +271,12 @@ private:
         motorsOrder.right_rear_pwm = rightRearPwmCmd;
         //Asservissement steering
         asservSteering();
-        //motorsOrder.steering_pwm = steeringPwmCmd;
+        motorsOrder.steering_pwm = steeringPwmCmd;
         //motorsOrder.steering_pwm = min(100,max(50+(requestedSteerAngle*200),0));
         publisher_can_->publish(motorsOrder);
     }
 
-    void saturSpeed()
+  /*  void saturSpeed()
     {
 
         float leftPwmCmd;
@@ -270,41 +303,79 @@ private:
         rightRearPwmCmd = rightPwmCmd;
 
     }
-		
+		*/
 
     void asservSpeed ()
     {
         float speedErrorLeft;
         float speedErrorRight;
 
-        float deltaErrorLeft;
-        float deltaErrorRight ;
+        //float deltaErrorLeft;
+        //float deltaErrorRight ;
 
         float leftPwmCmd;
         float rightPwmCmd;
+
+        //float previousleftPwmCmd;
+        //float previousrightPwmCmd;
+
+        //Termes proportionnels pour moteur droit et gauche
+        float P_x_r;
+        float P_x_l;
+
+
 
         //Computation of the error for Kp
         speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
         speedErrorRight = requestedSpeed - currentRightRearSpeed;
 
+        // Terme proportionnel
+        P_x_l = speedErrorLeft * Kp_l;
+        P_x_r = speedErrorRight * Kp_r;
+
+        // Terme intégral
+
+        rclcpp::Duration dt(this->get_clock()->now() - time_last);
+        double delta_t = dt.seconds()*0.001;
+        I_x_l = I_x_l + Ki_l * delta_t * speedErrorLeft;
+        I_x_r = I_x_r + Ki_r * delta_t * speedErrorRight;
+
+        time_last = this->get_clock()->now();
+
+        // Calcul de la commande
+        leftPwmCmd = P_x_l + I_x_l;
+        rightPwmCmd = P_x_r + I_x_r;
+
+
+
         //Computation of the error for Ki
-        sumIntegralLeft += speedErrorLeft;
-        sumIntegralRight += speedErrorRight;
+        //sumIntegralLeft += speedErrorLeft;
+        //sumIntegralRight += speedErrorRight;
 
         //Computation of the error for Kd
-        deltaErrorLeft = speedErrorLeft - previousSpeedErrorLeft;
-        deltaErrorRight = speedErrorRight - previousSpeedErrorRight;
-        previousSpeedErrorLeft = speedErrorLeft;
-        previousSpeedErrorRight = speedErrorRight;
+        //deltaErrorLeft = speedErrorLeft - previousSpeedErrorLeft;
+        //deltaErrorRight = speedErrorRight - previousSpeedErrorRight;
+        //previousSpeedErrorLeft = speedErrorLeft;
+        //previousSpeedErrorRight = speedErrorRight;
 
         //Computation of the command that must be sent to the motors
-        leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
-        rightPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+        //leftPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
+        //rightPwmCmd = speedErrorLeft * Kp_l + sumIntegralLeft * Ki_l + deltaErrorLeft * Kd_l;
         //rightPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
         //leftPwmCmd = speedErrorRight * Kp_r + sumIntegralRight * Ki_r + deltaErrorRight * Kd_r;
 
-        RCLCPP_INFO(this->get_logger(), "Lefy %f", leftPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "Right : %f", rightPwmCmd);
+        /*if (abs(speedErrorLeft) < TOLERANCE)
+        {
+            //sumIntegralLeft = 0.0;
+            leftPwmCmd = previousleftPwmCmd;
+            //rightPwmCmd = previousleftPwmCmd;
+            rightPwmCmd = previousrightPwmCmd;
+        }
+        else {
+            previousleftPwmCmd = leftPwmCmd;
+            //previousleftPwmCmd = rightPwmCmd;
+            previousrightPwmCmd = rightPwmCmd;
+        }*/
 
         if ( requestedSpeed >= 0)
         {
@@ -338,11 +409,11 @@ private:
             leftPwmCmd += 50;
             rightPwmCmd += 50;
         }
+
+        //RCLCPP_INFO(this->get_logger(), "LeftPwmCmd = %f, P_x_l = %f, I_x_l = %f", leftPwmCmd, P_x_l, I_x_l);
+        //RCLCPP_INFO(this->get_logger(), "RightPwmCmd : %f, P_x_l = %f, I_x_l = %f", rightPwmCmd, P_x_r, I_x_r);
         leftRearPwmCmd = leftPwmCmd;
         rightRearPwmCmd = rightPwmCmd;
-
-        RCLCPP_INFO(this->get_logger(), "Left pwm %d", leftRearPwmCmd);
-        RCLCPP_INFO(this->get_logger(), "right pwm %d", rightRearPwmCmd);
     }
 
     void asservSteering ()
