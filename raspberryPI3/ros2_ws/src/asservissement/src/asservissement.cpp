@@ -179,10 +179,10 @@ private:
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
         //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
         requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
-        if (requestedSpeed > 2 and requestedSpeed < 15)
-            requestedSpeed = 15;
-        else if (requestedSpeed < -2 and requestedSpeed > -15)
-            requestedSpeed = -15;
+        if (requestedSpeed > 2 and requestedSpeed < 20)
+            requestedSpeed = 20;
+        else if (requestedSpeed < -2 and requestedSpeed > -20)
+            requestedSpeed = -20;
         else if(requestedSpeed < 2 and requestedSpeed > -2)
             requestedSpeed = 0;
 
