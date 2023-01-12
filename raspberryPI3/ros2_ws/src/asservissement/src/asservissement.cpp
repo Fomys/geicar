@@ -182,8 +182,8 @@ private:
         requestedSpeed = (cmd_vel.linear.x/0.0105) ;
         if (requestedSpeed > 2 and requestedSpeed < 20)
             requestedSpeed = 20;
-        else if (requestedSpeed < -2 and requestedSpeed > -20)
-            requestedSpeed = -20;
+        else if (requestedSpeed < -2)
+            requestedSpeed = -25;
         else if(requestedSpeed < 2 and requestedSpeed > -2)
             requestedSpeed = 0;
 
