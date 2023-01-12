@@ -198,10 +198,10 @@ private:
             requestedSteerAngle = 0.0; //avoid impossible equation
         else
             if (cmd_vel.angular.z < 0){
-                requestedSteerAngle = -atan(WHEELBASE*(cmd_vel.angular.z * 4.8)/(requestedSpeed * 0.0105));
+                requestedSteerAngle = -atan(WHEELBASE*(cmd_vel.angular.z * 3.5)/(requestedSpeed * 0.0105));
             }
             else {
-                requestedSteerAngle = -atan(WHEELBASE * (cmd_vel.angular.z * 3.5) / (requestedSpeed * 0.0105));
+                requestedSteerAngle = -atan(WHEELBASE * (cmd_vel.angular.z * 4.8) / (requestedSpeed * 0.0105));
             }
 
 
