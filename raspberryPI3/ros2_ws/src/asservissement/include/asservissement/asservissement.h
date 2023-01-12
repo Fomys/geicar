@@ -35,7 +35,7 @@
 #define MAX_PWM_RIGHT 100
 #define TOLERANCE 2.0
 #define TOLERANCE_ANGLE 0.04    // Previous value  0.07
-#define WHEELBASE 0.5 //distance entre roues avant et arrières
+#define WHEELBASE 0.53 //distance entre roues avant et arrières
 
 
 #endif //DIRECTION_CONTROL_DIRECTION_CONTROL_NODE_H

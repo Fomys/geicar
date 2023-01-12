@@ -178,7 +178,8 @@ private:
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
         //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
-        requestedSpeed = (cmd_vel.linear.x/0.0105) ; //curr_cmd.lin/wheel_radius_;
+        // circumference of the wheel = 63 cm. 1 RPM is equivalent to the speed (0.63/60) m/s = 0.0105 m/s
+        requestedSpeed = (cmd_vel.linear.x/0.0105) ;
         if (requestedSpeed > 2 and requestedSpeed < 20)
             requestedSpeed = 20;
         else if (requestedSpeed < -2 and requestedSpeed > -20)
@@ -186,18 +187,22 @@ private:
         else if(requestedSpeed < 2 and requestedSpeed > -2)
             requestedSpeed = 0;
 
+    //requestedSteerAngle needs to be between -1 and 1. We know that requestedSteerAngle = -1 is 0.33 rad to the left.
+    // We know that requestedSteerAngle = 1 is 19° to the left, and requestedSteerAngle = 1 is 0.45 rad to the right.
+    // cmd_vel.angular.z gives command between -1 and 1 which corresponds to -pi/2 to pi/2 rad/s.
+    // So when we want to turn left : cmd_vel.angular.z needs to be multiplied by 4.8.
+    // When we want to turn right : cmd_vel.angular.z needs to be multiplied by 3.5.
 
-        //requestedSteerAngle needs to be between -1 and 1. We suppose that requestedSteerAngle = 1 is 20 degrees. (20 degrees is 0.35 rad). Negative is turning left.
-        //cmd_vel.angular.z needs to be between 0.35 and -0.35 rad but we don't know how to constraint it. It is between -1 and 1 so let's calibrate it.
-        //requestedSteerAngle = (cmd_vel.angular.z/ 0.35) ;
 
-
-
-        //RCLCPP_INFO(this->get_logger(), "requestedSteerAngle avant limitation : %f", requestedSteerAngle);
         if(cmd_vel.angular.z == 0.0 or requestedSpeed == 0.0)
-            requestedSteerAngle = 0.0;
+            requestedSteerAngle = 0.0; //avoid impossible equation
         else
-            requestedSteerAngle = -4 * atan(WHEELBASE*(cmd_vel.angular.z)/(requestedSpeed * 0.0105));
+            if (cmd_vel.angular.z < 0){
+                requestedSteerAngle = -atan(WHEELBASE*(cmd_vel.angular.z * 4.8)/(requestedSpeed * 0.0105));
+            }
+            else {
+                requestedSteerAngle = -atan(WHEELBASE * (cmd_vel.angular.z * 3.5) / (requestedSpeed * 0.0105));
+            }
 
 
         if(requestedSteerAngle < -1)
@@ -206,21 +211,7 @@ private:
             requestedSteerAngle = 1.0;
 
         RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
-
-
-
-        //requestedSteerAngle = cmd_vel.angular.z;
-        RCLCPP_INFO(this->get_logger(), "requestedSteerAngle apres limitation :  %f", requestedSteerAngle);
-
-        //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
-        //previousRequestedAngle = requestedSteerAngle; //saved in rad/s
-	    //requestedSteerAngle = -(requestedSteerAngle*(360/(2*3.14*10)))/2
-
-        //I_x_l = 0;
-        //I_x_r = 0;
-        //new_cmd = true;
-
-
+        RCLCPP_INFO(this->get_logger(), "requestedSteerAngle :  %f", requestedSteerAngle);
     }
 
 
