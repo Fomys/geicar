@@ -183,7 +183,7 @@ private:
         if (requestedSpeed > 2 and requestedSpeed < 20)
             requestedSpeed = 20;
         else if (requestedSpeed < -2)
-            requestedSpeed = -25;
+            requestedSpeed = -20;
         else if(requestedSpeed < 2 and requestedSpeed > -2)
             requestedSpeed = 0;
 
