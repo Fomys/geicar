@@ -186,6 +186,10 @@ private:
             requestedSpeed = -15;
         else if(requestedSpeed < 2 and requestedSpeed > -2)
             requestedSpeed = 0;
+        else if(requestedSpeed > 62)
+            requestedSpeed = 62;
+        else if(requestedSpeed < -62)
+            requestedSpeed = -62;
 
     //requestedSteerAngle needs to be between -1 and 1. We know that requestedSteerAngle = -1 is 0.33 rad to the left.
     // We know that requestedSteerAngle = 1 is 19° to the left, and requestedSteerAngle = 1 is 0.45 rad to the right.
