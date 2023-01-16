@@ -176,43 +176,9 @@ private:
      */
     void UpdateCmdSpeedOrder(const interfaces::msg::SpeedOrder & speed_order)
     {
-        // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
-        //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
-        // circumference of the wheel = 63 cm. 1 RPM is equivalent to the speed (0.63/60) m/s = 0.0105 m/s
-        requestedSpeed = (speed_order.speed_order/0.0105) ;
-        if (requestedSpeed > 2 and requestedSpeed < 20)
-            requestedSpeed = 20;
-        else if (requestedSpeed < -2 and requestedSpeed > -15)
-            requestedSpeed = -15;
-        else if(requestedSpeed < 2 and requestedSpeed > -2)
-            requestedSpeed = 0;
-        else if(requestedSpeed > 62)
-            requestedSpeed = 62;
-        else if(requestedSpeed < -62)
-            requestedSpeed = -62;
 
-    //requestedSteerAngle needs to be between -1 and 1. We know that requestedSteerAngle = -1 is 0.33 rad to the left.
-    // We know that requestedSteerAngle = 1 is 19° to the left, and requestedSteerAngle = 1 is 0.45 rad to the right.
-    // cmd_vel.angular.z gives command between -1 and 1 which corresponds to -pi/2 to pi/2 rad/s.
-    // So when we want to turn left : cmd_vel.angular.z needs to be multiplied by 4.8.
-    // When we want to turn right : cmd_vel.angular.z needs to be multiplied by 3.5.
-
-
-        if(speed_order.angle_order == 0.0 or requestedSpeed == 0.0)
-            requestedSteerAngle = 0.0; //avoid impossible equation
-        else
-            if (speed_order.angle_order < 0){
-                requestedSteerAngle = -atan(WHEELBASE*(speed_order.angle_order * 3.5)/(requestedSpeed * 0.0105));
-            }
-            else {
-                requestedSteerAngle = -atan(WHEELBASE * (speed_order.angle_order * 4.8) / (requestedSpeed * 0.0105));
-            }
-
-
-        if(requestedSteerAngle < -1)
-            requestedSteerAngle = -1.0;
-        else if (requestedSteerAngle > 1)
-            requestedSteerAngle = 1.0;
+        requestedSpeed = speed_order.speed_order ;
+        requestedSteerAngle = speed_order.angle_order;
 
         RCLCPP_INFO(this->get_logger(), "La vitesse qui vient d'etre demandee est %f RPM", requestedSpeed);
         RCLCPP_INFO(this->get_logger(), "requestedSteerAngle :  %f", requestedSteerAngle);
