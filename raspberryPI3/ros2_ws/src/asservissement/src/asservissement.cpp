@@ -332,7 +332,10 @@ private:
         //Computation of the error for Kp
         //speedErrorLeft = requestedSpeed - currentLeftRearSpeed;
         //speedErrorRight = requestedSpeed - currentRightRearSpeed;
-        speedError = requestedSpeed - currentRightRearSpeed;
+        if (requestedSpeed >= 0)
+            speedError = requestedSpeed - currentRightRearSpeed;
+        else
+            speedError = requestedSpeed + currentRightRearSpeed;
 
         // Terme proportionnel
         //P_x_l = speedErrorLeft * Kp_l;
