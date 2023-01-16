@@ -4,18 +4,19 @@ from rclpy.node import Node
 from interfaces.msg import StopCar
 from interfaces.msg import SpeedOrder
 from interfaces.msg import SpeedInput
+from geometry_msgs.msg import Twist
 
 
 class Security(Node):
     STOP_SPEED = 0.0  # RPM
-    CAUTIOUS_SPEED_REAR = -30.0  # RPM
-    CAUTIOUS_SPEED_FRONT = 30.0  # RPM
+    CAUTIOUS_SPEED_REAR = -20.0  # RPM
+    CAUTIOUS_SPEED_FRONT = 20.0  # RPM
     def __init__(self):
         super().__init__('secu')
 
         # Variables
         self.stop_ = StopCar()
-        self.speed_input = SpeedInput()
+        self.speed_input = Twist()
 
         # Publishers
         # Publish to SpeedOrder
@@ -26,12 +27,12 @@ class Security(Node):
         self.subscription_stop_car_ = self.create_subscription(StopCar, 'stop_car', self.stop_car_callback, 10)
 
         # subscribe to SpeedOrder topic
-        self.subscription_speed_input_ = self.create_subscription(SpeedInput, 'speed_input', self.speed_input_callback, 10)
+        self.subscription_cmd_vel = self.create_subscription(Twist, 'cmd_vel', self.speed_input_callback, 10)
 
     def stop_car_callback(self, msg: StopCar):
         # stock StopCar msg value in array
         speed_ = SpeedOrder()
-        speed_.speed_order = self.speed_input.speed_order_input
+        speed_.speed_order = self.speed_input.linear.x
         self.stop_ = msg
 
         if self.stop_.stop_car:
@@ -39,15 +40,16 @@ class Security(Node):
 
         else:
             if self.stop_.slow_rear:
-                speed_.speed_order = max(self.speed_input.speed_order_input, self.CAUTIOUS_SPEED_REAR)  # RPM
+                speed_.speed_order = max(self.speed_input.linear.x, self.CAUTIOUS_SPEED_REAR)  # RPM
             if self.stop_.slow_front:
-                speed_.speed_order = min(self.speed_input.speed_order_input, self.CAUTIOUS_SPEED_FRONT)  # RPM
+                speed_.speed_order = min(self.speed_input.linear.x, self.CAUTIOUS_SPEED_FRONT)  # RPM
 
         self.publisher_speed_order_.publish(speed_)
 
-    def speed_input_callback(self, speed_input: SpeedInput):
+    def speed_input_callback(self, cmd_vel: Twist):
         # Variables
-        self.speed_input = speed_input
+        self.speed_input.linear.x = cmd_vel.linear.x
+
 
 def main(args=None):
     rclpy.init(args=args)
