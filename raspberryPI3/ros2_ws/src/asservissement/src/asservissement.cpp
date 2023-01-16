@@ -71,7 +71,7 @@ public:
                 "angle_order", 10, std::bind(&asservissement::UpdateCmdAngle, this, _1));
                 */
         subscription_speed_order_ = this->create_subscription<interfaces::msg::SpeedOrder>(
-                "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeed, this, _1));
+                "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeedOrder, this, _1));
 
         /*subscription_cmd_vel_ = this->create_subscription<geometry_msgs::msg::Twist>(
                 "cmd_vel", 10, std::bind(&asservissement::UpdateCmdVel, this, _1));
@@ -174,7 +174,7 @@ private:
     /*
      * Callback to update the velocity command value
      */
-    void UpdateCmdVel(const interfaces::msg::SpeedOrder & speed_order)
+    void UpdateCmdSpeedOrder(const interfaces::msg::SpeedOrder & speed_order)
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
         //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
@@ -202,10 +202,10 @@ private:
             requestedSteerAngle = 0.0; //avoid impossible equation
         else
             if (speed_order.angle_order < 0){
-                requestedSteerAngle = -atan(WHEELBASE*(speed_order.angular_order * 3.5)/(requestedSpeed * 0.0105));
+                requestedSteerAngle = -atan(WHEELBASE*(speed_order.angle_order * 3.5)/(requestedSpeed * 0.0105));
             }
             else {
-                requestedSteerAngle = -atan(WHEELBASE * (speed_order.angular_order * 4.8) / (requestedSpeed * 0.0105));
+                requestedSteerAngle = -atan(WHEELBASE * (speed_order.angle_order * 4.8) / (requestedSpeed * 0.0105));
             }
 
 
