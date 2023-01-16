@@ -98,6 +98,10 @@ class Security(Node):
             else:
                 speed_.angle_order = -math.atan(self.WHEELBASE * (self.speed_input.angular.z * 4.8) / (speed_.speed_order * 0.0105));
 
+        if speed_.speed_order < 0.0:
+            speed_.angle_order = - speed_.angle_order
+
+
         #On sature la commande, en espérant qu'on ne s'éloigne jamais trop de ces valeurs
         if speed_.angle_order < -1.0:
             speed_.angle_order = -1.0
