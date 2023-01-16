@@ -42,16 +42,16 @@ class Security(Node):
         # because max RPM is 62.
         # circumference of the wheel = 63 cm. 1 RPM is equivalent to the speed (0.63/60) m/s = 0.0105 m/s
         speed_.speed_order = self.speed_input.linear.x/0.0105
-    
+
         self.get_logger().info('cmdvel_x =  "%f"' %  self.speed_input.linear.x)
         self.get_logger().info('cmdvel_x/0.0105 =  "%f"' % speed_.speed_order)
 
         #Vitesse minimale (pour que les roues tournent) en commande  = 20 RPM
         if 2.0 > speed_.speed_order > -2.0:
             speed_.speed_order = 0.0
-        elif speed_.speed_order < 20.0:
+        elif 20.0 > speed_.speed_order > 2.0:
             speed_.speed_order = 20.0
-        elif speed_.speed_order > -20.0:
+        elif -20.0 < speed_.speed_order < -2.0:
             speed_.speed_order = -20.0
 
         elif speed_.speed_order > 62.0:
@@ -74,10 +74,10 @@ class Security(Node):
         else:
             if self.stop_.slow_rear and speed_.speed_order < 0.0:
                 #si l'obstacle est derriere la voiture et qu'elle recule, on la ralentit si elle veut reculer trop rapidement
-                speed_.speed_order = max(self.speed_input.linear.x, self.CAUTIOUS_SPEED_REAR)  # RPM
+                speed_.speed_order = max(speed_.speed_order, self.CAUTIOUS_SPEED_REAR)  # RPM
             elif self.stop_.slow_front and speed_.speed_order > 0.0:
                 #si l'obstacle est devant la voiture et qu'elle avance, on la ralentit si elle veut avancer trop rapidement
-                speed_.speed_order = min(self.speed_input.linear.x, self.CAUTIOUS_SPEED_FRONT)  # RPM
+                speed_.speed_order = min(speed_.speed_order, self.CAUTIOUS_SPEED_FRONT)  # RPM
 
         self.get_logger().info('apres secu =  "%f"' % speed_.speed_order)
 
