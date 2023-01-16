@@ -48,7 +48,8 @@ class WebInterfaceNode(Node):
 
     def on_stop_car(self, stop):
         s = {
-            "stop_car": {"status": "good", "text": str(stop.stop_car)},
+            "stop_car_rear": {"status": "good", "text": str(stop.stop_car_rear)},
+            "stop_car_front": {"status": "good", "text": str(stop.stop_car_front)},
             "slow_rear": {"status": "good", "text": str(stop.slow_rear)},
             "slow_front": {"status": "good", "text": str(stop.slow_front)},
         }

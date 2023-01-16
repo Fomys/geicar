@@ -44,17 +44,17 @@ class Security(Node):
         speed_.speed_order = self.speed_input.linear.x/0.0105
 
         #Vitesse minimale (pour que les roues tournent) en commande  = 20 RPM
-        if 2 > speed_.speed_order > -2:
-            speed_.speed_order = 0
-        elif speed_.speed_order < 20:
-            speed_.speed_order = 20
-        elif speed_.speed_order > -20:
-            speed_.speed_order = -20
+        if 2.0 > speed_.speed_order > -2.0:
+            speed_.speed_order = 0.0
+        elif speed_.speed_order < 20.0:
+            speed_.speed_order = 20.0
+        elif speed_.speed_order > -20.0:
+            speed_.speed_order = -20.0
 
-        elif speed_.speed_order > 62:
-            speed_.speed_order = 62
-        elif speed_.speed_order < -62:
-            speed_.speed_order = -62
+        elif speed_.speed_order > 62.0:
+            speed_.speed_order = 62.0
+        elif speed_.speed_order < -62.0:
+            speed_.speed_order = -62.0
 
         #On fait attention aux obstacles et on régule la vitesse en fonction des ultrasons
         #et la direction dans laquelle on avance
@@ -87,15 +87,15 @@ class Security(Node):
         if self.speed_input.angular.z == 0.0 or speed_.speed_order == 0.0:
             speed_.angle_order = 0.0 #avoid impossible equation
         else:
-            if self.speed_input.angular.z < 0:
+            if self.speed_input.angular.z < 0.0:
                 speed_.angle_order = -math.atan(self.WHEELBASE * (self.speed_input.angular.z * 3.5)/(speed_.speed_order * 0.0105));
             else:
                 speed_.angle_order = -math.atan(self.WHEELBASE * (self.speed_input.angular.z * 4.8) / (speed_.speed_order * 0.0105));
 
         #On sature la commande, en espérant qu'on ne s'éloigne jamais trop de ces valeurs
-        if speed_.angle_order < -1:
+        if speed_.angle_order < -1.0:
             speed_.angle_order = -1.0
-        elif speed_.angle_order > 1:
+        elif speed_.angle_order > 1.0:
             speed_.angle_order = 1.0
 
         self.publisher_speed_order_.publish(speed_)
