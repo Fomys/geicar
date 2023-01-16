@@ -69,12 +69,13 @@ public:
         /*
         subscription_angle_order_ = this->create_subscription<interfaces::msg::AngleOrder>(
                 "angle_order", 10, std::bind(&asservissement::UpdateCmdAngle, this, _1));
+                */
         subscription_speed_order_ = this->create_subscription<interfaces::msg::SpeedOrder>(
                 "speed_order", 10, std::bind(&asservissement::UpdateCmdSpeed, this, _1));
-        */
-        subscription_cmd_vel_ = this->create_subscription<geometry_msgs::msg::Twist>(
-                "cmd_vel", 10, std::bind(&asservissement::UpdateCmdVel, this, _1));
 
+        /*subscription_cmd_vel_ = this->create_subscription<geometry_msgs::msg::Twist>(
+                "cmd_vel", 10, std::bind(&asservissement::UpdateCmdVel, this, _1));
+        */
 
         //Timer for update of parameters
         timer_parameter_ = this->create_wall_timer(PERIOD_UPDATE_PARAM, std::bind(&asservissement::updateParameters, this));
@@ -96,8 +97,7 @@ private:
     //Subscriptions
     rclcpp::Subscription<interfaces::msg::MotorsFeedback>::SharedPtr subscription_motors_feedback_;
     //rclcpp::Subscription<interfaces::msg::AngleOrder>::SharedPtr subscription_angle_order_;
-    //rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
-    rclcpp::Subscription<geometry_msgs::msg::Twist>::SharedPtr subscription_cmd_vel_;
+    rclcpp::Subscription<interfaces::msg::SpeedOrder>::SharedPtr subscription_speed_order_;
     //Timer
     rclcpp::TimerBase::SharedPtr timer_parameter_;
     rclcpp::TimerBase::SharedPtr timer_cmd_;
@@ -174,12 +174,12 @@ private:
     /*
      * Callback to update the velocity command value
      */
-    void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
+    void UpdateCmdVel(const interfaces::msg::SpeedOrder & speed_order)
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM.
         //Max cmd_vel.linear.x needs to be 0.65m/s (2.3km/h) because max RPM is 62.
         // circumference of the wheel = 63 cm. 1 RPM is equivalent to the speed (0.63/60) m/s = 0.0105 m/s
-        requestedSpeed = (cmd_vel.linear.x/0.0105) ;
+        requestedSpeed = (speed_order.speed_order/0.0105) ;
         if (requestedSpeed > 2 and requestedSpeed < 20)
             requestedSpeed = 20;
         else if (requestedSpeed < -2 and requestedSpeed > -15)
@@ -198,14 +198,14 @@ private:
     // When we want to turn right : cmd_vel.angular.z needs to be multiplied by 3.5.
 
 
-        if(cmd_vel.angular.z == 0.0 or requestedSpeed == 0.0)
+        if(speed_order.angle_order == 0.0 or requestedSpeed == 0.0)
             requestedSteerAngle = 0.0; //avoid impossible equation
         else
-            if (cmd_vel.angular.z < 0){
-                requestedSteerAngle = -atan(WHEELBASE*(cmd_vel.angular.z * 3.5)/(requestedSpeed * 0.0105));
+            if (speed_order.angle_order < 0){
+                requestedSteerAngle = -atan(WHEELBASE*(speed_order.angular_order * 3.5)/(requestedSpeed * 0.0105));
             }
             else {
-                requestedSteerAngle = -atan(WHEELBASE * (cmd_vel.angular.z * 4.8) / (requestedSpeed * 0.0105));
+                requestedSteerAngle = -atan(WHEELBASE * (speed_order.angular_order * 4.8) / (requestedSpeed * 0.0105));
             }
 
 
