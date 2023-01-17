@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
-project(interfaces)
+project(destination)
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -8,34 +8,28 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
-find_package(builtin_interfaces REQUIRED)
-find_package(rosidl_default_generators REQUIRED)
+find_package(interfaces REQUIRED)
+find_package(std_srvs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
-set(msg_files
-  "msg/SpeedOrder.msg"
-  "msg/StopCar.msg"
-  "msg/SpeedInput.msg"
-  "msg/AngleOrder.msg"
-  "msg/DistanceOrder.msg"
-  "msg/JoystickOrder.msg"
-  "msg/MessageApp.msg"
-  "msg/MotorsOrder.msg"
-  "msg/MotorsFeedback.msg"
-  "msg/GeneralData.msg"
-  "msg/SteeringCalibration.msg"
-  "msg/Ultrasonic.msg"
-  "msg/Gnss.msg"
-  "msg/SystemCheck.msg"
-  "msg/Package.msg"
-  "msg/DestCmd.msg")
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
-        ${msg_files}
-        "srv/ButtonPressed.srv"
-)
+add_executable(destination
+        src/destination.cpp)
 
-ament_export_dependencies(rosidl_default_runtime)
+ament_target_dependencies(destination rclcpp interfaces std_srvs geometry_msgs)
+ament_export_include_directories(include)
+
+target_include_directories(destination PUBLIC
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>)
+target_compile_features(destination PUBLIC c_std_99 cxx_std_17)  # Require C99 and C++17
+
+
+install(TARGETS destination
+        DESTINATION lib/${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

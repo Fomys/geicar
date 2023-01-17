@@ -68,6 +68,11 @@ def generate_launch_description():
         executable="web_interface",
         emulate_tty=True
     )
+    destination = Node(
+        package="destination",
+        executable="destination",
+        emulate_tty=True
+    )
 
     ld.add_action(secu)
     ld.add_action(obstacle_detection)
@@ -76,6 +81,7 @@ def generate_launch_description():
 #    ld.add_action(imu_filter_madgwick_node)
     ld.add_action(system_check_node)
     ld.add_action(asservissement)
+    ld.add_action(destination)
     ld.add_action(web_server)
     ld.add_action(detect_package)
     ld.add_action(comm_app)
