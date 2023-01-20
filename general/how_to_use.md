@@ -68,18 +68,22 @@ You can check that everything is working by pressing the "DPAD Left" button on t
 
 ## i. Connection to the car and start of the ROS Nodes
 
-### a)Powering the car
+### a)Powering up the car
 1. Plug in the battery
 2. Press the ON/OFF red button
 3. Press the "start" red button 
 
-**All the system is now powered**
+** The whole system is now powered up **
 
 
-### b)Connection to the Raspberry PI
-By default, the raspberry pi board connects to the IoT network at startup. 
+### b)Connection to the Raspberry PI 4
+By default, the raspberry pi4 board connects to the IoT network at startup. 
 
-_Sometimes the raspberry can't connect to the IoT network. This may be a problem with the network itself, or it may be that the date/time in the raspberry has drifted too much (there is no RTC). It is therefore advisable to add your own access point (e.g. your phone) to always be able to access the board.\
+_Due to connection issues to the IoT network, a wifi hotspot "postcar" has been enabled on the raspberry pi 4. The postcar wifi allows internet connection and enhances update and surfing functionalities. 
+
+The NTP feature has also been setup to resolve time synchronization issues, as the date/time in the raspberry used to drift too much (there is still no RTC). 
+
+In case of any internet connection issue, it is therefore advisable to add your own access point (e.g. your phone) to always be able to access the board.\
 It is also possible to connect the board to any other network by modifying the file "/etc/netplan/50-cloud-init.yaml". You can edit this file directly from the SD card, or from a terminal on the raspberry :_
 ```sh
 sudo nano /etc/netplan/50-cloud-init.yaml
@@ -88,15 +92,15 @@ sudo reboot
 ```
 
 
-1. Connect your pc to the same network as the raspberry (by default the IoT network)
-2. Connect to the raspberryPi via ssh **(adapt the IP address according to the car and the network used)** : 
+1. Connect your pc to the same network as the raspberry (postcar)
+2. Connect to the raspberryPi via mosh or ssh **(adapt the IP address according to the car and the network used)** : 
 ```sh
-ssh pi@10.105.1.XX
+mosh ubuntu@192.168.1.1     or   mosh ubuntu@192.168.1.1
 ```
 
 3. Enter the password : "geicar"
 
-**You are now in the raspberry environment : the prompt is now "pi@geicar"**
+**You are now in the raspberry environment : the prompt is now "ubuntu@ubuntu"**
 
 
 ### c)Starting the ROS nodes (in the Raspberry PI board)
@@ -173,7 +177,11 @@ In a Raspberry Pi terminal or in a Jetson Nano terminal :
 ```sh
 ros2 topic list
 ```
-2. You can display the messages published in the topic :
+2. You can see the list of all the topics and the related message type used on each topic :
+```sh
+ros2 topic list -t
+```
+3. You can display the messages published in the topic :
 ```sh
 ros2 topic echo 'NAME_OF_THE_TOPIC'
 ```
