@@ -42,13 +42,17 @@ class ObstacleDetection(Node):
 
         if msg.front_left < self.MINIMAL_DISTANCE \
                 or msg.front_center < self.MINIMAL_DISTANCE \
-                or msg.front_right < self.MINIMAL_DISTANCE \
-                or msg.rear_left < self.MINIMAL_DISTANCE \
-                or msg.rear_center < self.MINIMAL_DISTANCE \
-                or msg.rear_right < self.MINIMAL_DISTANCE:
-            stop.stop_car = True
+                or msg.front_right < self.MINIMAL_DISTANCE:
+            stop.stop_car_front = True
         else :
-            stop.stop_car = False
+            stop.stop_car_front = False
+
+        if msg.rear_left < self.MINIMAL_DISTANCE \
+               or msg.rear_center < self.MINIMAL_DISTANCE \
+               or msg.rear_right < self.MINIMAL_DISTANCE:
+            stop.stop_car_rear = True
+        else :
+            stop.stop_car_rear = False
 
         self.publish_stop_car.publish(stop)
 
