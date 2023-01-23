@@ -21,7 +21,9 @@ set(msg_files
   "msg/Ultrasonic.msg"
   "msg/Gnss.msg"
   "msg/SystemCheck.msg"
-)
+  "msg/MessageApp.msg"
+  "msg/Package.msg"
+        )
 
 rosidl_generate_interfaces(${PROJECT_NAME}
   ${msg_files}

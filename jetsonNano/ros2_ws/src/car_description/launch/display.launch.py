@@ -81,12 +81,6 @@ def generate_launch_description():
         emulate_tty=True
     )
 
-    camera_node = launch_ros.actions.Node(
-        package="usb_cam",
-        executable="usb_cam_node_exe",
-        emulate_tty=True,
-        parameters=[configured_params,],
-    )
 
     system_check_ack_node = launch_ros.actions.Node(
         package="system_check_ack",
@@ -212,7 +206,6 @@ def generate_launch_description():
 	rviz_node,
         laser_scan_matcher,
         lidar_node,
-        camera_node,
         system_check_ack_node,
         mapserver,
         lifecycle_manager,
