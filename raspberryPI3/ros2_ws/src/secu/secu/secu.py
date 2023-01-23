@@ -3,7 +3,6 @@ from rclpy.node import Node
 
 from interfaces.msg import StopCar
 from interfaces.msg import SpeedOrder
-from interfaces.msg import SpeedInput
 from geometry_msgs.msg import Twist
 import math
 
@@ -29,7 +28,7 @@ class Security(Node):
         # subscribe to StopCar topic
         self.subscription_stop_car_ = self.create_subscription(StopCar, 'stop_car', self.stop_car_callback, 10)
 
-        # subscribe to SpeedOrder topic
+        # subscribe to cmd_vel topic
         self.subscription_cmd_vel = self.create_subscription(Twist, 'cmd_vel', self.speed_input_callback, 10)
 
     def stop_car_callback(self, msg: StopCar):
@@ -42,9 +41,6 @@ class Security(Node):
         # because max RPM is 62.
         # circumference of the wheel = 63 cm. 1 RPM is equivalent to the speed (0.63/60) m/s = 0.0105 m/s
         speed_.speed_order = self.speed_input.linear.x/0.0105
-
-        self.get_logger().info('cmdvel_x =  "%f"' %  self.speed_input.linear.x)
-        self.get_logger().info('cmdvel_x/0.0105 =  "%f"' % speed_.speed_order)
 
         #Vitesse minimale (pour que les roues tournent) en commande  = 20 RPM
         if 2.0 > speed_.speed_order > -2.0:
@@ -59,7 +55,7 @@ class Security(Node):
         elif speed_.speed_order < -62.0:
             speed_.speed_order = -62.0
 
-        self.get_logger().info('apres saturation =  "%f"' % speed_.speed_order)
+
 
         #On fait attention aux obstacles et on régule la vitesse en fonction des ultrasons
         #et la direction dans laquelle on avance
@@ -79,7 +75,7 @@ class Security(Node):
                 #si l'obstacle est devant la voiture et qu'elle avance, on la ralentit si elle veut avancer trop rapidement
                 speed_.speed_order = min(speed_.speed_order, self.CAUTIOUS_SPEED_FRONT)  # RPM
 
-        self.get_logger().info('apres secu =  "%f"' % speed_.speed_order)
+
 
         #On calcule maintenant l'angle des roues qui dépend de la vitesse
         # speed_input.angular.z is the angular speed
@@ -105,7 +101,8 @@ class Security(Node):
             speed_.angle_order = -1.0
         elif speed_.angle_order > 1.0:
             speed_.angle_order = 1.0
-        self.get_logger().info('avant envoie =  "%f"' % speed_.speed_order)
+
+        self.get_logger().info('speed en sortie de secu =  "%f"' %speed_.speed_order)
         self.publisher_speed_order_.publish(speed_)
 
     def speed_input_callback(self, cmd_vel: Twist):
