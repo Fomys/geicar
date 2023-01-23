@@ -41,7 +41,7 @@ private:
     /*
      * Callback to update the destination coming from the web app
      */
-    void destCmdCallback(const interfaces::msg::DestCmd &dest_cmd) {
+    void destCmdCallback(const  interfaces::msg::DestCmd &dest_cmd) {
         auto goal_pose = geometry_msgs::msg::PoseStamped();
         rclcpp::Time time = this->get_clock()->now();
         goal_pose.header.stamp = time;
