@@ -192,10 +192,13 @@ class WebInterfaceNode(Node):
             msg.angle_order = 0
         self.angle_order_publisher.publish(msg)
 
-    def toggle_bip(self):
-        self.last_bip = not self.last_bip
+    def bip_on(self):
         msg = MessageApp()
-        msg.detect_door = self.last_bip
+        msg.detect_door = True
+        self.bip_publisher.publish(msg)
+    def bip_off(self):
+        msg = MessageApp()
+        msg.detect_door = False
         self.bip_publisher.publish(msg)
 
     def on_log(self, log):
@@ -245,12 +248,31 @@ def index():
             web_interface_node.goto_porte()
     return render_template("index.html")
 
-
 @app.route('/debug', methods=["GET"])
 def debug():
     if request.method == 'GET':
-        if "bip" in request.args.keys():
-            web_interface_node.toggle_bip()
+        if "bip-on" in request.args.keys():
+            web_interface_node.bip_on()
+        elif "bip-off" in request.args.keys():
+            web_interface_node.bip_on()
+        elif "bip-off" in request.args.keys():
+            web_interface_node.bip_on()
+        elif "map_etage1" in request.args.keys():
+            web_interface_node.map_etage1()
+        elif "set_initial" in request.args.keys():
+            web_interface_node.set_initial()
+        elif "set_auriol" in request.args.keys():
+            web_interface_node.set_auriol()
+        elif "set_avant_ascenceur" in request.args.keys():
+            web_interface_node.set_avant_ascenceur()
+        elif "set_devant_ascenceur" in request.args.keys():
+            web_interface_node.set_devant_ascenceur()
+        elif "set_dedans_ascenceur" in request.args.keys():
+            web_interface_node.set_dedans_ascenceur()
+        elif "map_blank" in request.args.keys():
+            web_interface_node.map_blank()
+        elif "set_dedans_ascenceur" in request.args.keys():
+            web_interface_node.set_dedans_ascenceur_blank()
     return render_template("debug.html")
 
 
