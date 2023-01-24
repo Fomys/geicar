@@ -196,6 +196,7 @@ class WebInterfaceNode(Node):
         msg = MessageApp()
         msg.detect_door = True
         self.bip_publisher.publish(msg)
+
     def bip_off(self):
         msg = MessageApp()
         msg.detect_door = False
@@ -248,15 +249,14 @@ def index():
             web_interface_node.goto_porte()
     return render_template("index.html")
 
+
 @app.route('/debug', methods=["GET"])
 def debug():
     if request.method == 'GET':
         if "bip-on" in request.args.keys():
             web_interface_node.bip_on()
         elif "bip-off" in request.args.keys():
-            web_interface_node.bip_on()
-        elif "bip-off" in request.args.keys():
-            web_interface_node.bip_on()
+            web_interface_node.bip_off()
         elif "map_etage1" in request.args.keys():
             web_interface_node.map_etage1()
         elif "set_initial" in request.args.keys():
