@@ -53,14 +53,33 @@ class WebInterfaceNode(Node):
         self.t.header.stamp = self.get_clock().now().to_msg()
         self.tf_broadcaster.sendTransform(self.t)
 
+
+# x=-0.45498513576304334
+# y=-0.0025589360403252214
+# z=0.0
+# x=0.0
+# y=0.0
+# z=-0.003666682128062078
+# w=0.9999932776984912
+
+# x=62.290000915527344
+# y=52.77000045776367
+# z_orien=0.0
+# w_orien=1.0
+
+# x=62.74498605129039
+# y=52.772559393803995
+# z_orien=0.003666682128062078,
+# w_orien=6.722301508776951e-06
+
     def on_set_pos(self, position):
         now = rclpy.time.Time()
         odom_to_base_link = self.tf_buffer.lookup_transform("base_link", "odom", now)
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
-        position.x -= odom_to_base_link.transform.translation.x
-        position.y -= odom_to_base_link.transform.translation.y
-        position.z_orien -= odom_to_base_link.transform.rotation.z
-        position.w_orien -= odom_to_base_link.transform.rotation.w
+        position.x += odom_to_base_link.transform.translation.x
+        position.y += odom_to_base_link.transform.translation.y
+        position.z_orien += odom_to_base_link.transform.rotation.z
+        position.w_orien += odom_to_base_link.transform.rotation.w
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
 
         self.t.header.stamp = self.get_clock().now().to_msg()
