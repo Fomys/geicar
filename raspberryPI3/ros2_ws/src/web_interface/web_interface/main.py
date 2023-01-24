@@ -15,9 +15,13 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder, MessageApp
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder, MessageApp, DestCmd, ActiveSecu
 import threading
 
+
+positions = {
+    "auriol": DestCmd
+}
 
 class WebInterfaceNode(Node):
     def start_in_background(self):
@@ -45,6 +49,66 @@ class WebInterfaceNode(Node):
         self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 2)
         self.angle_order_publisher = self.create_publisher(AngleOrder, "/angle_order", 2)
         self.bip_publisher = self.create_publisher(MessageApp, "/reach_door", 1)
+        self.pos_publisher = self.create_publisher(DestCmd, "/dest_cmd", 1)
+        self.secu_publisher = self.create_publisher(ActiveSecu, "/active_secu", 1)
+
+    def goto_auriol(self):
+        msg = ActiveSecu()
+        msg.active = True
+        self.pos_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 66.5
+        msg.y = 52.76
+        msg.z_orien=0.0
+        msg.w_orien=1.0
+        self.pos_publisher.publish(msg)
+
+    def goto_avant_ascenceur(self):
+        msg = ActiveSecu()
+        msg.active = True
+        self.pos_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 71.9
+        msg.y = 52.7
+        msg.z_orien=0.0
+        msg.w_orien=1.0
+        self.pos_publisher.publish(msg)
+
+    def goto_devant_ascenceur(self):
+        msg = ActiveSecu()
+        msg.active = False
+        self.pos_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 74.17
+        msg.y = 52.76
+        msg.z_orien = 0.70
+        msg.w_orien = 0.71
+        self.pos_publisher.publish(msg)
+
+    def goto_dedans_ascenceur(self):
+        msg = ActiveSecu()
+        msg.active = False
+        self.pos_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 74.45
+        msg.y = 55.14
+        msg.z_orien = 0.70
+        msg.w_orien = 0.71
+        self.pos_publisher.publish(msg)
+
+    def goto_sortie_ascenceur(self):
+        msg = ActiveSecu()
+        msg.active = True
+        self.pos_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 74.17
+        msg.y = 52.56
+        msg.z_orien = 0.70
+        msg.w_orien = 0.71
+        self.pos_publisher.publish(msg)
+
+    def goto_porte(self):
+        pass
 
     def on_stop_car(self, stop):
         s = {
@@ -164,6 +228,19 @@ web_interface_node = WebInterfaceNode(socket_io=socket_)
 
 @app.route('/', methods=["GET"])
 def index():
+    if request.method == 'GET':
+        if "auriol" in request.args.keys():
+            web_interface_node.goto_auriol()
+        elif "avant_ascenceur" in request.args.keys():
+            web_interface_node.goto_avant_ascenceur()
+        elif "devant_ascenceur" in request.args.keys():
+            web_interface_node.goto_devant_ascenceur()
+        elif "dedans_ascenceur" in request.args.keys():
+            web_interface_node.goto_dedans_ascenceur()
+        elif "sortie_ascenceur" in request.args.keys():
+            web_interface_node.goto_sortie_ascenceur()
+        elif "porte" in request.args.keys():
+            web_interface_node.goto_porte()
     return render_template("index.html")
 
 

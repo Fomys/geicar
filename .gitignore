@@ -38,3 +38,4 @@ log/
 
 #Dossier IDE
 .idea/
+__pycache__/
