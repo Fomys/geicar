@@ -111,7 +111,15 @@ class WebInterfaceNode(Node):
         self.pos_publisher.publish(msg)
 
     def goto_porte(self):
-        pass
+        msg = ActiveSecu()
+        msg.active = True
+        self.pos_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 74.17
+        msg.y = 46.6
+        msg.z_orien = 0.70
+        msg.w_orien = 0.71
+        self.pos_publisher.publish(msg)
 
     def on_stop_car(self, stop):
         s = {
