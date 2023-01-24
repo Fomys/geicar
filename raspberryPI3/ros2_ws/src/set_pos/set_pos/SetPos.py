@@ -92,6 +92,8 @@ class WebInterfaceNode(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_broadcaster = TransformBroadcaster(self)
         self.t = TransformStamped()
+        self.t.header.frame_id = 'map'
+        self.t.child_frame_id = 'odom'
         self.t.transform.rotation.x = 0.0
         self.t.transform.rotation.y = 0.0
         self.t.transform.rotation.z = 0.0
