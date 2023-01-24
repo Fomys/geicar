@@ -50,6 +50,7 @@ class WebInterfaceNode(Node):
         timer = self.create_timer(self.TIMER, self.timer_callback)
 
     def timer_callback(self):
+        self.t.header.stamp = self.get_clock().now().to_msg()
         self.tf_broadcaster.sendTransform(self.t)
 
     def on_set_pos(self, position):
