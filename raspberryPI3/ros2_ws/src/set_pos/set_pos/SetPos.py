@@ -76,8 +76,8 @@ class WebInterfaceNode(Node):
         now = rclpy.time.Time()
         odom_to_base_link = self.tf_buffer.lookup_transform("base_link", "odom", now)
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
-        position.x += odom_to_base_link.transform.translation.x
-        position.y += odom_to_base_link.transform.translation.y
+        position.x -= odom_to_base_link.transform.translation.x
+        position.y -= odom_to_base_link.transform.translation.y
         # position.z_orien += odom_to_base_link.transform.rotation.z
         # position.w_orien += odom_to_base_link.transform.rotation.w
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
@@ -90,8 +90,8 @@ class WebInterfaceNode(Node):
         self.t.transform.translation.z = 0.0
         self.t.transform.rotation.x = 0.0
         self.t.transform.rotation.y = 0.0
-        self.t.transform.rotation.z = position.w_orien
-        self.t.transform.rotation.w = position.z_orien
+        # self.t.transform.rotation.z = position.w_orien
+        # self.t.transform.rotation.w = position.z_orien
 
 rclpy.init()
 web_interface_node = WebInterfaceNode()
