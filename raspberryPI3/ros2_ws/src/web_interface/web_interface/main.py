@@ -227,8 +227,8 @@ class WebInterfaceNode(Node):
         msg = DestCmd()
         msg.x = 62.29
         msg.y = 52.77
-        msg.z_orien = 0
-        msg.w_orien = 1
+        msg.z_orien = 0.0
+        msg.w_orien = 1.0
         self.pos_publisher.publish(msg)
 
 
