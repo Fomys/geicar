@@ -49,6 +49,7 @@ class WebInterfaceNode(Node):
         self.delivery_subscription = self.create_subscription(Package, "/detect_package", self.on_pacakge_detect, 1)
 
         self.speed_order_publisher = self.create_publisher(SpeedInput, "/speed_input", 2)
+        self.set_pos_publisher = self.create_publisher(DestCmd, "/set_pos", 1)
         self.angle_order_publisher = self.create_publisher(AngleOrder, "/angle_order", 2)
         self.bip_publisher = self.create_publisher(MessageApp, "/reach_door", 1)
         self.pos_publisher = self.create_publisher(DestCmd, "/dest_cmd", 1)
@@ -201,6 +202,36 @@ class WebInterfaceNode(Node):
         msg = MessageApp()
         msg.detect_door = False
         self.bip_publisher.publish(msg)
+
+        # elif "map_etage1" in request.args.keys():
+        #     web_interface_node.map_etage1()
+        # elif "set_initial" in request.args.keys():
+        #     web_interface_node.set_initial()
+        # elif "set_auriol" in request.args.keys():
+        #     web_interface_node.set_auriol()
+        # elif "set_avant_ascenceur" in request.args.keys():
+        #     web_interface_node.set_avant_ascenceur()
+        # elif "set_devant_ascenceur" in request.args.keys():
+        #     web_interface_node.set_devant_ascenceur()
+        # elif "set_dedans_ascenceur" in request.args.keys():
+        #     web_interface_node.set_dedans_ascenceur()
+        # elif "map_blank" in request.args.keys():
+        #     web_interface_node.map_blank()
+        # elif "set_dedans_ascenceur" in request.args.keys():
+        #     web_interface_node.set_dedans_ascenceur_blank()
+
+    def map_etage1(self):
+        pass
+
+    def set_initial(self):
+        msg = DestCmd()
+        msg.x = 62.29
+        msg.y = 52.77
+        msg.z_orien = 0
+        msg.w_orien = 1
+        self.pos_publisher.publish(msg)
+
+
 
     def on_log(self, log):
         if log.level == 10:
