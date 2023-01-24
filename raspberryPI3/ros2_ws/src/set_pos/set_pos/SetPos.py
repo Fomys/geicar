@@ -25,6 +25,51 @@ from tf2_ros.buffer import Buffer
 from tf2_ros.transform_listener import TransformListener
 from tf2_ros.transform_broadcaster import TransformBroadcaster
 
+
+import math
+ 
+def euler_from_quaternion(x, y, z, w):
+        """
+        Convert a quaternion into euler angles (roll, pitch, yaw)
+        roll is rotation around x in radians (counterclockwise)
+        pitch is rotation around y in radians (counterclockwise)
+        yaw is rotation around z in radians (counterclockwise)
+        """
+        t0 = +2.0 * (w * x + y * z)
+        t1 = +1.0 - 2.0 * (x * x + y * y)
+        roll_x = math.atan2(t0, t1)
+     
+        t2 = +2.0 * (w * y - z * x)
+        t2 = +1.0 if t2 > +1.0 else t2
+        t2 = -1.0 if t2 < -1.0 else t2
+        pitch_y = math.asin(t2)
+     
+        t3 = +2.0 * (w * z + x * y)
+        t4 = +1.0 - 2.0 * (y * y + z * z)
+        yaw_z = math.atan2(t3, t4)
+     
+        return roll_x, pitch_y, yaw_z # in radians
+def quaternion_from_euler(ai, aj, ak):
+    ai /= 2.0
+    aj /= 2.0
+    ak /= 2.0
+    ci = math.cos(ai)
+    si = math.sin(ai)
+    cj = math.cos(aj)
+    sj = math.sin(aj)
+    ck = math.cos(ak)
+    sk = math.sin(ak)
+    cc = ci*ck
+    cs = ci*sk
+    sc = si*ck
+    ss = si*sk
+    q = [0,0,0,0]
+    q[0] = cj*sc - sj*cs
+    q[1] = cj*ss + sj*cc
+    q[2] = cj*cs - sj*sc
+    q[3] = cj*cc + sj*ss
+
+    return q
 positions = {
     "auriol": DestCmd
 }
@@ -75,11 +120,13 @@ class WebInterfaceNode(Node):
     def on_set_pos(self, position):
         now = rclpy.time.Time()
         odom_to_base_link = self.tf_buffer.lookup_transform("base_link", "odom", now)
+        rx,ry,rz = euler_from_quaternion(odom_to_base_link.transform.rotation.x, odom_to_base_link.transform.rotation.y, odom_to_base_link.transform.rotation.z, odom_to_base_link.transform.rotation.w)
+        rpx,rpy,rpz = euler_from_quaternion(0, 0, position.z_orien, position.w_orien)
+        dz = rpz-rz
+        self.t.transform.rotation.x, self.t.transform.rotation.y, self.t.transform.rotation.z, self.t.transform.rotation.w = quaternion_from_euler(0,0,dz)
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
         position.x -= odom_to_base_link.transform.translation.x
         position.y -= odom_to_base_link.transform.translation.y
-        position.z_orien -= odom_to_base_link.transform.rotation.z
-        position.w_orien -= odom_to_base_link.transform.rotation.w
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
 
         self.t.header.stamp = self.get_clock().now().to_msg()
@@ -90,8 +137,6 @@ class WebInterfaceNode(Node):
         self.t.transform.translation.z = 0.0
         self.t.transform.rotation.x = 0.0
         self.t.transform.rotation.y = 0.0
-        self.t.transform.rotation.z = position.z_orien
-        self.t.transform.rotation.w = position.w_orien
 
 rclpy.init()
 web_interface_node = WebInterfaceNode()
