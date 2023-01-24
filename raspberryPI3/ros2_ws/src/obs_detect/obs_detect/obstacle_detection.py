@@ -2,6 +2,7 @@ import rclpy
 from rclpy.node import Node
 
 from interfaces.msg import Ultrasonic
+from interfaces.msg import ActiveSecu
 from interfaces.msg import MotorsOrder
 from interfaces.msg import StopCar
 
@@ -24,7 +25,7 @@ class ObstacleDetection(Node):
 
 
 
-    def activeSecu_callback(self, msg:ActiveSecu):
+    def activeSecu_callback(self, msg: ActiveSecu):
         if msg.active:
             MINIMAL_DISTANCE = 40
             CAUTION_DISTANCE = 70
