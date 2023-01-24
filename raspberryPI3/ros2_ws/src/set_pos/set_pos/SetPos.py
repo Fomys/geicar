@@ -92,6 +92,13 @@ class WebInterfaceNode(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_broadcaster = TransformBroadcaster(self)
         self.t = TransformStamped()
+        self.t.transform.rotation.x = 0.0
+        self.t.transform.rotation.y = 0.0
+        self.t.transform.rotation.z = 0.0
+        self.t.transform.rotation.w = 0.0
+        self.t.transform.translation.x = 0.0
+        self.t.transform.translation.y = 0.0
+        self.t.transform.translation.z = 0.0
         timer = self.create_timer(self.TIMER, self.timer_callback)
 
     def timer_callback(self):
