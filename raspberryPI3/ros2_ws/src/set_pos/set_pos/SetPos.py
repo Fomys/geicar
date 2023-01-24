@@ -154,7 +154,8 @@ class WebInterfaceNode(Node):
             self.t.transform.translation.z = 0.0
             self.t.transform.rotation.x = 0.0
             self.t.transform.rotation.y = 0.0
-        except:
+        except Exception as e:
+            self.get_logger().info("State Package ", e)
             self.t.header.frame_id = 'map'
             self.t.child_frame_id = 'odom'
             self.t.transform.translation.x = position.x
