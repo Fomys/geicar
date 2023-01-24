@@ -55,7 +55,7 @@ class WebInterfaceNode(Node):
 
     def on_set_pos(self, position):
         now = rclpy.time.Time()
-        odom_to_base_link = self.tf_buffer.lookup_transform("base_link", "map", now)
+        odom_to_base_link = self.tf_buffer.lookup_transform("base_link", "odom", now)
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
         position.x -= odom_to_base_link.transform.translation.x
         position.y -= odom_to_base_link.transform.translation.y
