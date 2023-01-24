@@ -28,7 +28,8 @@ set(msg_files
   "msg/Gnss.msg"
   "msg/SystemCheck.msg"
   "msg/Package.msg"
-  "msg/DestCmd.msg")
+  "msg/DestCmd.msg"
+  "msg/ActiveSecu.msg")
 
 rosidl_generate_interfaces(${PROJECT_NAME}
         ${msg_files}

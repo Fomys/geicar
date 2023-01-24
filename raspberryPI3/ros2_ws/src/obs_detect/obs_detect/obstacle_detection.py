@@ -7,8 +7,8 @@ from interfaces.msg import StopCar
 
 
 class ObstacleDetection(Node):
-    MINIMAL_DISTANCE = 0
-    CAUTION_DISTANCE = 0
+    MINIMAL_DISTANCE = 40
+    CAUTION_DISTANCE = 70
 
 
     def __init__(self):
@@ -20,6 +20,19 @@ class ObstacleDetection(Node):
 
         # Subscribers
         self.subscription_us = self.create_subscription(Ultrasonic, 'us_data', self.us_callback, 10)
+        self.subscription_activeSecu = self.create_subscription(ActiveSecu, 'active_secu', self.activeSecu_callback, 10)
+
+
+
+    def activeSecu_callback(self, msg:ActiveSecu):
+        if msg.active:
+            MINIMAL_DISTANCE = 40
+            CAUTION_DISTANCE = 70
+        else:
+            MINIMAL_DISTANCE = 0
+            CAUTION_DISTANCE = 0
+
+
 
     def us_callback(self, msg: Ultrasonic):
 
