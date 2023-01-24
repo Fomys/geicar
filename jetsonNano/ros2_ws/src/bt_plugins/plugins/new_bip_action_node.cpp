@@ -13,18 +13,20 @@ namespace nav2_behavior_tree
             BT::SyncActionNode(xml_tag_name, conf)
     {
         node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
-        std::cerr<<"Init"<<std::endl;
-        RCLCPP_DEBUG(node_->get_logger(), "BIP ACTION");
+        std::cerr<<"bip Init"<<std::endl;
+        RCLCPP_DEBUG(node_->get_logger(), "Bip init");
 
+        rclcpp::QoS qos(rclcpp::KeepLast(10));
+        qos.transient_local().reliable();
         bip_publisher = node_->create_publisher<interfaces::msg::MessageApp>("/reach_door", rclcpp::QoS(10));
-        bip_subscription = node_->create_subscription<interfaces::msg::MessageApp>("/reach_door", 10, std::bind(&BipAction::CallbackBip ,this, std::placeholders::_1));
+        bip_subscription = node_->create_subscription<interfaces::msg::MessageApp>("/reach_door", qos, std::bind(&BipAction::CallbackBip ,this, std::placeholders::_1));
     }
 
     BT::NodeStatus BipAction::tick()
     {
         //Info we are executing actions
         RCLCPP_DEBUG(node_->get_logger(), "BIP ACTION");
-
+        std::cerr<<"on bip"<<std::endl;
         //Create publisher and msg to publish
         auto msg_bip = interfaces::msg::MessageApp();
 
@@ -37,6 +39,7 @@ namespace nav2_behavior_tree
 
     void BipAction::CallbackBip(const interfaces::msg::MessageApp & msg_bip)
     {
+        std::cerr<<"get etat"<<std::endl;
         state = msg_bip.detect_door;
     }
 }

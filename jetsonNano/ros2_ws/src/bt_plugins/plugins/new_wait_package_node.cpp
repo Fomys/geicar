@@ -10,10 +10,16 @@ namespace nav2_behavior_tree
     WaitPackage::WaitPackage(
             const std::string &xml_tag_name,
             const BT::NodeConfiguration &conf):
-            BT::SyncActionNode(xml_tag_name, conf)
+            BT::ConditionNode(xml_tag_name, conf)
     {
         node_ = config().blackboard->get<rclcpp::Node::SharedPtr>("node");
-        package_subscription = node_->create_subscription<interfaces::msg::Package>("detect_package", 10, std::bind(&WaitPackage::CallbackWaitPackage ,this, std::placeholders::_1));
+
+        rclcpp::QoS qos(rclcpp::KeepLast(10));
+        qos.transient_local().reliable();
+        package_subscription = node_->create_subscription<interfaces::msg::Package>("/detect_package", qos, std::bind(&WaitPackage::CallbackWaitPackage ,this, std::placeholders::_1));
+
+        std::cerr<<package_subscription->get_topic_name()<<std::endl;
+        std::cerr<<package_subscription->get_subscription_handle()<<std::endl;
 
         getInput("fetch_drop", drop);
 
@@ -26,15 +32,17 @@ namespace nav2_behavior_tree
     BT::NodeStatus WaitPackage::tick()
     {
         //Info we are executing actions
-        RCLCPP_DEBUG(node_->get_logger(), "Init Package");
-
+        RCLCPP_DEBUG(node_->get_logger(), "tick package");
+        //std::cerr<<"wait package"<<std::endl;
         //We have to drop a package, we wait for true on detection
         //We have to fetch a package, we wait for false on detection
         if (state == drop) {
+            std::cerr<<"YES"<<std::endl;
             return BT::NodeStatus::SUCCESS;
         }
         else {
-            return BT::NodeStatus::RUNNING;
+            std::cerr<<"no"<<std::endl;
+            return BT::NodeStatus::FAILURE;
         }
 
     }
@@ -44,6 +52,7 @@ namespace nav2_behavior_tree
     WaitPackage::CallbackWaitPackage(const interfaces::msg::Package & msg_package)
     {
         //Get state of the package
+        std::cerr<<"get_state"<<std::endl;
         state = msg_package.state_pack;
     }
 

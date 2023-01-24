@@ -15,7 +15,7 @@
 namespace nav2_behavior_tree
 {
 
-class WaitPackage : public BT::SyncActionNode
+class WaitPackage : public BT::ConditionNode
 {
 public:
     /**
