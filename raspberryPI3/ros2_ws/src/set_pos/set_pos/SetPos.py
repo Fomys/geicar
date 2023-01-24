@@ -63,6 +63,7 @@ class WebInterfaceNode(Node):
         t.transform.rotation.z = position.w_orien
         t.transform.rotation.w = position.z_orien
         self.tf_broadcaster.sendTransform(t)
+        self.get_logger().info(f'My log message {t}')
 
 
 
