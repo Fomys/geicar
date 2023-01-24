@@ -119,15 +119,22 @@ class WebInterfaceNode(Node):
 
     def on_set_pos(self, position):
         now = rclpy.time.Time()
-        odom_to_base_link = self.tf_buffer.lookup_transform("base_link", "odom", now)
-        rx,ry,rz = euler_from_quaternion(odom_to_base_link.transform.rotation.x, odom_to_base_link.transform.rotation.y, odom_to_base_link.transform.rotation.z, odom_to_base_link.transform.rotation.w)
+        map_to_base_link = self.tf_buffer.lookup_transform("base_link", "map", now)
+        map_to_odom = self.tf_buffer.lookup_transform("odom", "map", now)
+        dx = map_to_base_link.transform.translation.x - map_to_odom.transform.translation.x
+        dy = map_to_base_link.transform.translation.y - map_to_odom.transform.translation.z
+        dz = map_to_base_link.transform.translation.z - map_to_odom.transform.translation.y
+
+
+
+        rx,ry,rz = euler_from_quaternion(map_to_base_link.transform.rotation.x, map_to_base_link.transform.rotation.y, map_to_base_link.transform.rotation.z, map_to_base_link.rotation.w)
+        rx2,ry2,rz2 = euler_from_quaternion(map_to_odom.transform.rotation.x, map_to_odom.transform.rotation.y, map_to_odom.transform.rotation.z, map_to_odom.rotation.w)
         rpx,rpy,rpz = euler_from_quaternion(0, 0, position.z_orien, position.w_orien)
-        dz = rpz-rz
+        dz = rpz-(rz-rz2)
         self.t.transform.rotation.x, self.t.transform.rotation.y, self.t.transform.rotation.z, self.t.transform.rotation.w = quaternion_from_euler(0,0,dz)
-        self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
-        position.x -= odom_to_base_link.transform.translation.x
-        position.y -= odom_to_base_link.transform.translation.y
-        self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
+
+        position.x -= dx
+        position.y -= dy
 
         self.t.header.stamp = self.get_clock().now().to_msg()
         self.t.header.frame_id = 'map'
