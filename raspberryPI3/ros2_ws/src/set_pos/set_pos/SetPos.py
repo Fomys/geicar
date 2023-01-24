@@ -90,8 +90,8 @@ class WebInterfaceNode(Node):
         self.t.transform.translation.z = 0.0
         self.t.transform.rotation.x = 0.0
         self.t.transform.rotation.y = 0.0
-        # self.t.transform.rotation.z = position.w_orien
-        # self.t.transform.rotation.w = position.z_orien
+        self.t.transform.rotation.z = position.z_orien
+        self.t.transform.rotation.w = position.w_orien
 
 rclpy.init()
 web_interface_node = WebInterfaceNode()
