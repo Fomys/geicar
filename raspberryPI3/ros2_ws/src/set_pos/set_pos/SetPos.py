@@ -47,7 +47,7 @@ class WebInterfaceNode(Node):
         self.tf_listener = TransformListener(self.tf_buffer, self)
         self.tf_broadcaster = TransformBroadcaster(self)
         self.t = TransformStamped()
-        timer = self.create_timer(self.TIMER, self.check_button)
+        timer = self.create_timer(self.TIMER, self.timer_callback)
 
     def timer_callback(self):
         self.tf_broadcaster.sendTransform(self.t)
