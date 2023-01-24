@@ -78,8 +78,8 @@ class WebInterfaceNode(Node):
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
         position.x -= odom_to_base_link.transform.translation.x
         position.y -= odom_to_base_link.transform.translation.y
-        # position.z_orien += odom_to_base_link.transform.rotation.z
-        # position.w_orien += odom_to_base_link.transform.rotation.w
+        position.z_orien -= odom_to_base_link.transform.rotation.z
+        position.w_orien -= odom_to_base_link.transform.rotation.w
         self.get_logger().info(f'My log message {odom_to_base_link}\n {position}')
 
         self.t.header.stamp = self.get_clock().now().to_msg()
