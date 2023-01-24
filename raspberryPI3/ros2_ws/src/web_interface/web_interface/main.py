@@ -229,7 +229,7 @@ class WebInterfaceNode(Node):
         msg.y = 52.77
         msg.z_orien = 0.0
         msg.w_orien = 1.0
-        self.pos_publisher.publish(msg)
+        self.set_pos_publisher.publish(msg)
 
 
 
