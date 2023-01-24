@@ -7,8 +7,8 @@ from interfaces.msg import StopCar
 
 
 class ObstacleDetection(Node):
-    MINIMAL_DISTANCE = 40
-    CAUTION_DISTANCE = 70
+    MINIMAL_DISTANCE = 0
+    CAUTION_DISTANCE = 0
 
 
     def __init__(self):
