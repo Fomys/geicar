@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Debug
+{% endblock %}
+
+{% block body %}
+    <form>
+        <button class="btn btn-success" name="bip-on" type="submit">Enable bip</button>
+        <button class="btn btn-success" name="bip-off" type="submit">Disable bip</button>
+        <br>
+        <button class="btn btn-success" name="map_etage1" type="submit">Set map etage1</button>
+        <button class="btn btn-success" name="set_initial" type="submit">Set original pos</button>
+        <button class="btn btn-success" name="set_auriol" type="submit">Set auriol pos</button>
+        <button class="btn btn-success" name="set_avant_ascenceur" type="submit">Set avant ascenceur</button>
+        <button class="btn btn-success" name="set_devant_ascenceur" type="submit">Set devant ascenceur</button>
+        <button class="btn btn-success" name="set_dedans_ascenceur" type="submit">Set dedans ascenceur</button>
+        <br>
+        <button class="btn btn-success" name="map_blank" type="submit">Set blank map</button>
+        <button class="btn btn-success" name="set_dedans_ascenceur" type="submit">Set dedans ascenceur</button>
+    </form>
+{% endblock %}

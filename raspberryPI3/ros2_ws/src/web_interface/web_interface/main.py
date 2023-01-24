@@ -1,5 +1,6 @@
 import sys
 
+
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
 
@@ -15,13 +16,14 @@ from rclpy.node import Node
 from rclpy.qos import QoSProfile, QoSDurabilityPolicy
 
 from rcl_interfaces.msg import Log
-from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder, MessageApp, DestCmd, ActiveSecu
+from interfaces.msg import StopCar, SpeedOrder, SpeedInput, MotorsFeedback, Package, AngleOrder, MessageApp, DestCmd, \
+    ActiveSecu
 import threading
-
 
 positions = {
     "auriol": DestCmd
 }
+
 
 class WebInterfaceNode(Node):
     def start_in_background(self):
@@ -59,8 +61,8 @@ class WebInterfaceNode(Node):
         msg = DestCmd()
         msg.x = 66.5
         msg.y = 52.76
-        msg.z_orien=0.0
-        msg.w_orien=1.0
+        msg.z_orien = 0.0
+        msg.w_orien = 1.0
         self.pos_publisher.publish(msg)
 
     def goto_avant_ascenceur(self):
@@ -70,8 +72,8 @@ class WebInterfaceNode(Node):
         msg = DestCmd()
         msg.x = 71.9
         msg.y = 52.7
-        msg.z_orien=0.0
-        msg.w_orien=1.0
+        msg.z_orien = 0.0
+        msg.w_orien = 1.0
         self.pos_publisher.publish(msg)
 
     def goto_devant_ascenceur(self):
@@ -244,6 +246,14 @@ def index():
     return render_template("index.html")
 
 
+@app.route('/debug', methods=["GET"])
+def debug():
+    if request.method == 'GET':
+        if "bip" in request.args.keys():
+            web_interface_node.toggle_bip()
+    return render_template("debug.html")
+
+
 @app.route('/logs', methods=["GET"])
 def logs():
     log_history = web_interface_node.logs
@@ -254,31 +264,6 @@ def logs():
 def status():
     return render_template("status.html", status=web_interface_node.status)
 
-
-@app.route('/order', methods=["GET", "POST"])
-def order():
-    if request.method == 'POST':
-        speed = request.form.get('speed')
-        angle = request.form.get('angle')
-        web_interface_node.publish_speed(speed, angle)
-    return render_template("speed.html", status=web_interface_node.status)
-
-
-@app.route('/lift', methods=["GET", "POST"])
-def lift():
-    if request.method == 'POST':
-        if "enter" in request.form.keys():
-            eprint("publish enter")
-        elif "exit" in request.form.keys():
-            eprint("publish exit")
-    return render_template("lift.html")
-
-@app.route('/bip', methods=["GET"])
-def bip():
-    if request.method == 'GET':
-        if "bip" in request.args.keys():
-            web_interface_node.toggle_bip()
-    return render_template("bip.html")
 
 web_interface_node.start_in_background()
 app.run(port=5000, host="0.0.0.0")
