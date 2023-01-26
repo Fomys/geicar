@@ -3,15 +3,23 @@
 {% block title %}Accueil{% endblock %}
 
 {% block body %}
-    <p>Bienvenue sur la gestion de Postcar !</p>
-    <p>Vous pouvez sur cette interface controller la voiture et avoir son status.</p>
 
-    <form method="get">
-        <button class="btn btn-success" name="auriol" type="submit">Auriol</button>
-        <button class="btn btn-success" name="avant_ascenceur" type="submit">Avant l'ascenceur</button>
-        <button class="btn btn-success" name="devant_ascenceur" type="submit">Devant l'ascenceur</button>
-        <button class="btn btn-success" name="dedans_ascenceur" type="submit">Dedans l'ascenceur</button>
-        <button class="btn btn-success" name="sortie_ascenceur" type="submit">Sortie de l'ascenceur</button>
-        <button class="btn btn-success" name="porte" type="submit">Porte</button>
-    </form>
+    <h1>Bienvenue !</h1>
+    <h2>Ici, vous pouvez appeler PostCar !</h2>
+    <br>
+
+		<form class = "centre" method="get">
+			 <button name="auriol" type="submit">Appeler la voiture chez vous </button>
+			 <br> <br>
+			 <button name="avant_ascenceur" type="submit">Envoyer colis dans le hall </button>
+			<br> <br> <br> <br>
+			<p class="alerte"> Ces prochains boutons ne sont pas à destination du client. Ils permettent une supervision de la demonstration </p>
+			 <button name="devant_ascenceur" type="submit">Devant l'ascenceur</button>
+			 <br> <br>
+			 <button name="dedans_ascenceur" type="submit">Dedans l'ascenceur</button>
+			 <br> <br>
+			 <button name="sortie_ascenceur" type="submit">Sortie de l'ascenceur</button>
+			 <br><br>
+			 <button name="porte" type="submit">Porte</button>
+		</form>
 {% endblock %}

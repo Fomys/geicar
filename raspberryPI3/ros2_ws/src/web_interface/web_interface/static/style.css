@@ -37,9 +37,37 @@ nav.main ul {
 }
 
 
+h1 {
+	color : IndianRed;
+	text-align: center;
+}
+
+h2 {
+	color : LightCoral;
+	text-align: center;
+}
 
 
+.alerte {
+	text-align: center;
+	font-size : medium;
+}
 
+button {
+	text-align: center;
+  background-color: #FFA07A;
+  color: FireBrick;
+  text-align: center;
+  font-size: 32px;
+  padding: 10px;
+  width: 300px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+.centre{
+  text-align: center;
+}
 
 
 table.logs .level-debug {

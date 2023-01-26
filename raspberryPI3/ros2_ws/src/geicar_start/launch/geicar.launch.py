@@ -80,7 +80,7 @@ def generate_launch_description():
     )
 
     ld.add_action(secu)
-    ld.add_action(set_pos)
+    #ld.add_action(set_pos)
     ld.add_action(obstacle_detection)
     ld.add_action(can_rx_node)
     ld.add_action(can_tx_node)

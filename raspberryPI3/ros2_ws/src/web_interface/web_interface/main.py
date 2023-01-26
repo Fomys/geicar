@@ -58,7 +58,7 @@ class WebInterfaceNode(Node):
     def goto_auriol(self):
         msg = ActiveSecu()
         msg.active = True
-        self.pos_publisher.publish(msg)
+        self.secu_publisher.publish(msg)
         msg = DestCmd()
         msg.x = 66.5
         msg.y = 52.76
@@ -69,7 +69,7 @@ class WebInterfaceNode(Node):
     def goto_avant_ascenceur(self):
         msg = ActiveSecu()
         msg.active = True
-        self.pos_publisher.publish(msg)
+        self.secu_publisher.publish(msg)
         msg = DestCmd()
         msg.x = 71.9
         msg.y = 52.7
@@ -80,7 +80,7 @@ class WebInterfaceNode(Node):
     def goto_devant_ascenceur(self):
         msg = ActiveSecu()
         msg.active = False
-        self.pos_publisher.publish(msg)
+        self.secu_publisher.publish(msg)
         msg = DestCmd()
         msg.x = 74.17
         msg.y = 52.76
@@ -91,7 +91,7 @@ class WebInterfaceNode(Node):
     def goto_dedans_ascenceur(self):
         msg = ActiveSecu()
         msg.active = False
-        self.pos_publisher.publish(msg)
+        self.secu_publisher.publish(msg)
         msg = DestCmd()
         msg.x = 74.45
         msg.y = 55.14
@@ -102,7 +102,7 @@ class WebInterfaceNode(Node):
     def goto_sortie_ascenceur(self):
         msg = ActiveSecu()
         msg.active = True
-        self.pos_publisher.publish(msg)
+        self.secu_publisher.publish(msg)
         msg = DestCmd()
         msg.x = 74.17
         msg.y = 52.56
@@ -111,7 +111,15 @@ class WebInterfaceNode(Node):
         self.pos_publisher.publish(msg)
 
     def goto_porte(self):
-        pass
+        msg = ActiveSecu()
+        msg.active = True
+        self.secu_publisher.publish(msg)
+        msg = DestCmd()
+        msg.x = 74.17
+        msg.y = 46.6
+        msg.z_orien = 0.70
+        msg.w_orien = 0.71
+        self.pos_publisher.publish(msg)
 
     def on_stop_car(self, stop):
         s = {
