@@ -42,11 +42,14 @@ public:
 
   void CallbackBip(const interfaces::msg::MessageApp & msg_bip);
 
+  //Variable to get node
   rclcpp::Node::SharedPtr node_;
 
+  //Publisher and subscriber
   rclcpp::Publisher<interfaces::msg::MessageApp>::SharedPtr bip_publisher;
   rclcpp::Subscription<interfaces::msg::MessageApp>::SharedPtr bip_subscription;
 
+  // We were supposed to write the state of the topic to this variable
   bool state;
 
 };

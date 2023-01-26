@@ -86,6 +86,13 @@ To compute the path, the localisation of the car must be functional ! The path i
 There is a small subltility here, the executor publish on the topic cmd_vel, and we have to transform the order to the correct kind on our car. That is done by the node {TODO @madeline}. 
 
 ### Behaviors
+The nav2 stack needs to decide what to do when it receives a new target position. What it should do next, at what frequency, etc. Nav2 implements something called a behavior tree which does exactly that. When a new position is set, the first step is to compute a path then to follow it. However, sometimes things don't go as planned. We can add more behavior to our tree to take into accounts this cases to try to solve. 
 
-{TODO: @andrea @augustin}
+The default tree, which is loaded when not a specific one is given corresponds to one called `navigate_to_pose_w_replanning_and_recovery.xml` You can find a more detailed description of this tree on the documentation website of  navigation2. 
+
+We can also modify this tree and add more nodes. You can read how a behavior tree works on the `BehaviorTree3.CPP` GitHub. Navigation2 is based on this library to implement its tree and some specific nodes. We can also code our own nodes (in our case for example to make a sound when a destination is reached). 
+
+For further information refer to the README on the directory `jetsonNano/ros2_ws/src/bt_plugins` as well as the comments on the code. You can also see some examples of custom trees on the folder `jetsonNano/ros2_ws/src/car_description/config`. They are not fully functionnal but they will give an idea of how they are done. You can visualize the trees using a tool called Groot which you can download [here](https://github.com/BehaviorTree/Groot). 
+
+
 

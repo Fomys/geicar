@@ -44,14 +44,18 @@ public:
         }; //none
     }
 
+    //Function to get state of the package
     void CallbackWaitPackage(const interfaces::msg::Package & msg_package);
 
+    //Variable to get node
     rclcpp::Node::SharedPtr node_;
 
+    //Varibable to write port input to
     bool drop;
 
     bool state;
 
+    //Subscriber
     rclcpp::Subscription<interfaces::msg::Package>::SharedPtr package_subscription;
 
 };

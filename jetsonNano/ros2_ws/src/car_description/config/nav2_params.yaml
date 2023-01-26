@@ -104,6 +104,7 @@ bt_navigator:
     - nav2_goal_checker_selector_bt_node
     - bt_plugin_new_bip_action_node
     - bt_plugin_new_wait_package_node
+    #- you can add here your custom nodes
 
 bt_navigator_rclcpp_node:
   ros__parameters:

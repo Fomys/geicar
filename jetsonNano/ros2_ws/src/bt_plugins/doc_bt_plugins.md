@@ -29,15 +29,49 @@ colcon build --packages-select bt_plugins
 ```
 It is better to build the plugins before compiling everything else but should work fine even if it is not the case. 
 ### MakeFile
+The make file let's us add a new library executable (.so) that can be found by the behavior tree when loading. The library executables will be compiled to the directory `<your_workspace>/install/bt_plugins/lib` In the CMake file we also have to add all the new dependencies for our new plugins as well as in the package .xml, specially if new types of messages have to be added. 
 
 ## Adding a new nav2_behavior_tree plugin
+You need to write 2 new files and a add some lines to the CMake file to add a new plugin. Also, you will have to add your new plugin in the file `car_description/config/nav2_params` where we set the configuration. You just have to add the name of the plugin as it is written on your CMake file. 
 ### Header Files
+Copy one the files present as an example. You first have to decide which type of node you want for your derived class (action, condition, some special nav2 node, etc.) Then define the constructor, the tick function (which might be called `tick()`or `on_tick()`depending on the type) and any other function you may want. You also have to define all the class variables.  
+Do not forget that you also need to define the porst of your node. You can have a node with no input or output ports as seen on the BipAction node. 
 ### Source Files
-### Add to CMake
+Here you write the code you want to execute for all the functions you defined in the .hpp. Don't forget to initialize the node variable if you want to communicate with the rest of ROS. Look at the nodes here and on nav2 (in the folder nav2_behavior_tree) for inspiration. 
 
-## Additionnal useful infprmation
+Don't forget to add the function extern `"C"
+{void BT_RegisterNodesFromPlugin(BT::BehaviorTreeFactory& factory)` at the end to register your behavior tree. The name of the function might change depending on the version of nav2
+
+
+### Add to CMake
+To compile your new plugin you have to add the following lines to the CMake file :
+
+```
+add_library(<new_plugin_name> SHARED plugins/<name_cpp_file>)
+
+ament_target_dependencies(<new_plugin_name>
+        ${dependencies}
+        )
+
+install(TARGETS
+        bt_plugin_new_bip_action_node
+        bt_plugin_new_wait_package_node
+        <new_plugin_name>
+        ARCHIVE DESTINATION lib
+        LIBRARY DESTINATION lib
+        RUNTIME DESTINATION bin
+        )
+```
+The name `<new_plugin_name>` is the name you have to add to the configuration .yaml for the bt_navigator configuration. 
+
+
+
+## Additional useful information
 
 ### Loading and registering plugins in the nav2_behavior_tree
-### Implementation of a new tree on the jetson
+You have to make sure that your library is loaded. For this the easiest way is to add a `std::cerr` in you function. This way a message will be printed to the screen. 
+If you have an error like `cannot load <Symbol_name` this means it was looking for something and did not find it. You can use the `nm` command on the terminal to analyse the .so and see if its really missing or if the name is not what is looking for. If the symbol is missing it might mean that the compiler is doing some optimization and not compiling your function. It was the case for us and that is why if you look at the actual documentation, you will that we do not use the same macro to register our node to the behavior tree. We have done this because we encountered this problem. 
 
+### Implementation of a new tree on the jetson
+When you implement a new tree for nav2 check the version of the downloaded trees because they do not match up with the last ones (in our case it did not at least). Even though we had downloaded everything only 3 months ago. This meant that the default trees on the last commit on GitHub could not be used on our system. When writing a new one or design it with Groot, check that you are using the right version of the nodes. 
 
