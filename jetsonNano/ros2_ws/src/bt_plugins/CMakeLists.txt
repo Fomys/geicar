@@ -64,9 +64,6 @@ ament_target_dependencies(bt_plugin_new_wait_package_node
         ${dependencies}
         )
 
-#ament_target_dependencies(bt_plugin_new_publish_next_pose_node
-#        ${dependencies}
-#        )
 
 foreach(bt_plugin ${plugin_libs})
   ament_target_dependencies(${bt_plugin} ${dependencies})
@@ -76,7 +73,6 @@ endforeach()
 install(TARGETS
         bt_plugin_new_bip_action_node
         bt_plugin_new_wait_package_node
- #       bt_plugin_new_publish_next_pose_node
         ARCHIVE DESTINATION lib
         LIBRARY DESTINATION lib
         RUNTIME DESTINATION bin
