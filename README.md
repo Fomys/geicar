@@ -19,8 +19,21 @@ The projects are (or were) surpervised by:
 * AURIOL Guillaume
 * DI MERCURIO Sébastien
 
+## What is this repository
+
+On this repository you will found the work of the Shaibel team on the car. The main features implemented are:
+- LIDAR odometry (Jetson)
+- Navigation2 (Jetson)
+- Navigation2 to car controller (Raspberry Pi)
+- Ultrasound security (Raspberry Pi)
+- Web interface (Raspberry Pi)
+
+## Organization
+
+On this main branch you will found the last version of our project. A more advanced description of our project can be found in the file `README_JUST_AFTER_README.md`
+
 ## Quick User Guide
-###Turn the car on and off
+### Turn the car on and off
 * To turn on the car:
   * Toggle the red button to bring the power.
   * Press the START push button (hold it down for a short while).
@@ -31,7 +44,7 @@ The projects are (or were) surpervised by:
 * To turn off the car:
 	* Use the red button as a switch to turn off the power.
 
-###Use of this repository
+### Use of this repository
 * First of all, [fork this repository](https://docs.github.com/en/get-started/quickstart/fork-a-repo) to get yours.
 * Then, clone your fresh and new repository on your computer: `git clone https://github.com/<your id>/<your wonderful repo>`
 * Have a look in "general" directory for how to connect and work with your car
@@ -45,5 +58,10 @@ The projects are (or were) surpervised by:
 __warning__
 You normally do not need to change firmware running in F103 and F476 boards. You main work is on the raspberry and jetson side.
 
-## SHAIBEL TEAM 
-Madeline ROntard 
+## SHAIBEL TEAM
+Augustin Galoo
+Christ Mboumba
+Andrea Perez
+Minh Hieu Bui
+Madeline Rontard 
+Louis Chauvet
