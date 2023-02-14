@@ -4,7 +4,7 @@
 using namespace std;
 using placeholders::_1;
 
-/*
+
 int min(int a, int b) {
 	if(a < b) {
 		return a;
@@ -18,7 +18,7 @@ int max(int a, int b) {
 	} else {
 		return a;
 	}
-}*/
+}
 
 class asservissement : public rclcpp::Node{
 
@@ -170,10 +170,10 @@ private:
     void UpdateCmdVel(const geometry_msgs::msg::Twist & cmd_vel)
     {
         // cmd_vel.twist.linear.x is a speed in m/s. We need to transform it as RPM. 1 RPM = 0.0105 m/s
-        AngularSpeedRequested = (cmd_vel.linear.x/0.0105)/3 ; //curr_cmd.lin/wheel_radius_;
+        requestedSpeed = (cmd_vel.linear.x/0.0105)/3 ; //curr_cmd.lin/wheel_radius_;
         //requestedSteerAngle needs to be between -1,5 and 1,5. We suppose that 1.5 is 15 degrees
         //requestedSteerAngle = (cmd_vel.angular.z * (360/(2*3.14*10)))/2 ;
-        requestedSteerAngle = curr_cmd.ang;
+        requestedSteerAngle = -cmd_vel.angular.z;
         RCLCPP_INFO(this->get_logger(), "%f", requestedSteerAngle);
 
         //requestedSteerAngle = previousRequestedAngle + 0.05*cmd_vel.angular.z; //in rad/s
